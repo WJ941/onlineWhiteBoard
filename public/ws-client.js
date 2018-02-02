@@ -1,5 +1,5 @@
 // Create WebSocket connection.
-const socket = new WebSocket('ws://localhost:8080', 'echo-protocol');
+const socket = new WebSocket('ws://localhost:3000', 'echo-protocol');
 
 // Connection opened
 socket.addEventListener('open', function (event) {

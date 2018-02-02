@@ -4,47 +4,20 @@ var WebSocketRouter = require('websocket').router;
 var http = require('http');
 var fs = require('fs');
 var uuidv4 = require('uuid/v4')
- // Global Variables
+var path = require('path')
+
+const express = require('express')
+const app = express()
+app.set('port', 3000)
+app.use(express.static(path.join(__dirname, 'public')))
+// Listen for requests
+var server = app.listen(app.get('port'), function() {
+    var port = server.address().port;
+    console.log('You are listening on port ' + port)
+})
+
 var clients = []
 var clientIndex = 0
-var server = http.createServer(function(request, response) {
-  console.log((new Date()) + ' Received request for sadf' + request.url);
-  if (request.url === '/') {
-      fs.readFile('./index.html', 'utf8', function(err, data) {
-          if (err) {
-              response.writeHead(404);
-              response.end();
-          }
-          else {
-              response.writeHead(200, {
-                  'Content-Type': 'text/html'
-              });
-              response.end(data);
-          }
-      });
-  } else if (request.url === '/ws-client.js') {
-    fs.readFile('./ws-client.js', 'utf8', function(err, data) {
-        if (err) {
-            response.writeHead(404);
-            response.end();
-        }
-        else {
-            response.writeHead(200, {
-                'Content-Type': 'text/plain'
-            });
-            response.end(data);
-        }
-    });
-  }
-  else {
-      response.writeHead(404);
-      response.end();
-  }
-});
-server.listen(8080, function() {
-    console.log((new Date()) + ' Server is listening on port 8080');
-});
-
 wsServer = new WebSocketServer({
     httpServer: server,
     // You should not use autoAcceptConnections for production
@@ -63,9 +36,9 @@ function originIsAllowed(origin) {
 wsServer.on('request', function(request) {
     if (!originIsAllowed(request.origin)) {
       // Make sure we only accept requests from an allowed origin
-      request.reject();
-      console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.');
-      return;
+      request.reject()
+      console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.')
+      return
     }
     
     var connection = request.accept('echo-protocol', request.origin);
@@ -73,7 +46,6 @@ wsServer.on('request', function(request) {
     clients.push(connection)
     var cIndex = clients.findIndex( client => client.id === connection.id)
     console.log('client id : ', connection.id)
-    console.log((new Date()) + ' Connection accepted.');
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
             console.log('Received Message: ' + message.utf8Data + ' from client ' + cIndex);
@@ -89,9 +61,9 @@ wsServer.on('request', function(request) {
             console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');
             // connection.sendBytes(message.binaryData);
         }
-    });
+    })
     connection.on('close', function(reasonCode, description) {
         console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
         clients.splice(cIndex, 1)
     });
-});
+})
