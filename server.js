@@ -17,7 +17,6 @@ var server = app.listen(app.get('port'), function() {
 })
 
 var clients = []
-var clientIndex = 0
 wsServer = new WebSocketServer({
     httpServer: server,
     // You should not use autoAcceptConnections for production
@@ -26,7 +25,7 @@ wsServer = new WebSocketServer({
     // *always* verify the connection's origin and decide whether or not
     // to accept it.
     autoAcceptConnections: false
-});
+})
  
 function originIsAllowed(origin) {
   // put logic here to detect whether the specified origin is allowed.
@@ -44,15 +43,14 @@ wsServer.on('request', function(request) {
     var connection = request.accept('echo-protocol', request.origin);
     connection.id = uuidv4()
     clients.push(connection)
-    var cIndex = clients.findIndex( client => client.id === connection.id)
-    console.log('client id : ', connection.id)
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
-            console.log('Received Message: ' + message.utf8Data + ' from client ' + cIndex);
+            console.log('Received Message: ' + message.utf8Data + ' from client ' + connection.id)
+            console.log('client amount: ', clients.length)
             // connection.sendUTF(message.utf8Data);
             // 分发消息到每个client
             for(var i = 0; i < clients.length; i++) {
-                if(i !== cIndex) {
+                if(connection.id !== clients[i].id) {
                     clients[i].sendUTF(message.utf8Data)
                 }
             }
@@ -63,7 +61,8 @@ wsServer.on('request', function(request) {
         }
     })
     connection.on('close', function(reasonCode, description) {
-        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.')
+        var cIndex = clients.findIndex( client => client.id === connection.id)
         clients.splice(cIndex, 1)
     });
 })

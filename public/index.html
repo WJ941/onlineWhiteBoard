@@ -5,84 +5,84 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Online White Board</title>
-  <style lang="">
-    * {
-      box-sizing: border-box;
-    }
-    canvas {
-      border: 1px solid black;
-    }
-    /* 颜色选择器样式 */
-    div:first-of-type {
-      display: flex;
-      align-items: flex-start;
-      margin-bottom: 5px;
-    }
-
-    input[type="radio"] {
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-
-      border: 4px solid #fff;
-      transition: 0.2s all linear;
-      outline: none;
-      margin-right: 5px;
-
-      position: relative;
-      top: 4px;
-    }
-
-    input:checked {
-      border: 4px solid rgba(80, 178, 228, 0.82);
-    }
-
-    .black {
-      background-color: black;
-    }
-    .red {
-      background-color: red;
-    }
-    .yellow {
-      background-color: yellow;
-    }
-    textarea {
-      border: none;
-    }
-    textarea:focus {
-      outline: none;
-      padding: 0;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <p><span>工具栏</span><button id="id-clear" type="button">清空画布</button></p>
-  <form name='colorselector'>
-    <label for="">选择颜色</label>
-    <input type="radio" class="black" name="color" value="black" checked>
-    <input type="radio" class="red" name="color" value="red">
-    <input type="radio" class="yellow" name="color" value="yellow">
-    <input id="id-color-picker" type="color" value="#ff0000">
-  </form>
-  <form>
-    <label>画笔粗细</label>
-    <input type="range" min="1" max="10" value="1" name="line-width"></input>
-  </form>
-  <form>
-    <label>文字</label>
-    <input type="checkbox" name="text"></input>
-    <label>字体大小</label>
-    <input type="range" min="10" max="60" value="1" step="2" name="font-size"></input>
-  </form>
+  <p><button id="id-clear" type="button">清空画布</button></p>
+  <div>
+    <ul class="noselect">
+      <li class="dropdown">
+        <a href="javascript:void(0)" class="dropbtn triangle">
+          <i class="material-icons">color_lens</i>
+        </a>
+        <div class="dropdown-content">
+          <form name='colorselector'>
+            <div class="dropdown-content-item">
+              <label for="">选择颜色</label>
+              <input type="radio" class="black" name="color" value="black" checked>
+              <input type="radio" class="red" name="color" value="red">
+              <input type="radio" class="yellow" name="color" value="yellow">
+            </div>
+            <div class="dropdown-content-item">
+              <input id="id-color-picker" type="color" value="#ff0000">
+            </div>
+          </form>
+        </div>
+      </li>
+
+      <li class="dropdown">
+        <a href="javascript:void(0)" class="dropbtn triangle">
+          <i class="material-icons">create</i>
+        </a>
+        <div class="dropdown-content">
+          <form>
+            <div class="dropdown-content-item">
+              <label>画笔粗细</label>
+              <input type="range" min="1" max="10" value="1" name="line-width"></input>
+              <span id="line-width">10</span>
+            </div>
+          </form>
+        </div>
+      </li>
+
+      <li class="dropdown">
+        <a href="javascript:void(0)" class="dropbtn triangle">
+          <i class="material-icons">text_format</i>
+        </a>
+        <div class="dropdown-content">
+            <div class="dropdown-content-item">
+              <input id="isText" type="checkbox" name="text" class="checkbox-icon"></input>
+              <label for="isText">
+                <span>文字</span>
+                <i class="material-icons">check_box</i>
+                <i class="material-icons">check_box_outline_blank</i>
+              </label>
+                
+            </div>
+            <div class="dropdown-content-item">
+              <label>字体大小</label>
+              <input type="range" min="10" max="60" value="1" step="2" name="font-size"></input>
+              <span id="font-size">1</span>
+            </div>
+        </div>
+      </li>
+      
+    </ul>
+
+  </div>
+  
+  
+  
 
   <canvas id="id-canvas" width="500" height="500"></canvas>
-  <textarea id="id-textarea" autofocus></textarea>
+  <textarea id="id-textarea" autofocus class="hide"></textarea>
 </body>
-<script src="./ws-client.js"></script>
+<script src="./wsClient.js"></script>
 <script src="./board.js"></script>
+<script src="./textarea.js"></script>
+<script src="./lineDrawer.js"></script>
 <script src="./utilitys.js"></script>
 
 <script>
@@ -97,9 +97,8 @@ var _main = function() {
   var isTextInput = sel('input[name="text"]')
   var textarea = sel('#id-textarea')
   var fontSizeInput = sel('input[name="font-size"]')
-
-  var board = new Board(canvas, textarea, clearBtn, colorRadios, colorPicker,lineWidthInput, fontSizeInput, isTextInput, socket)
-  board.registeEvent()
+  var wsClient = new WSClient()
+  var board = new Board(canvas, textarea, clearBtn, colorRadios, colorPicker,lineWidthInput, fontSizeInput, isTextInput, wsClient)
 }
 _main()
 </script>

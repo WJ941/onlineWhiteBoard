@@ -1,0 +1,141 @@
+* {
+  box-sizing: border-box;
+  margin: 0em;
+  padding: 0em;
+}
+canvas {
+  margin-top: 2rem;
+  border: 1px solid black;
+}
+input[type="radio"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+
+  border: 4px solid #fff;
+  transition: 0.2s all linear;
+  outline: none;
+  margin-right: 5px;
+
+}
+
+input:checked {
+  border: 4px solid rgba(80, 178, 228, 0.82);
+}
+
+.black {
+  background-color: black;
+}
+.red {
+  background-color: red;
+}
+.yellow {
+  background-color: yellow;
+}
+textarea {
+  border: none;
+}
+textarea:focus {
+  outline: none;
+  padding: 0;
+}
+.crosshair-cursor {
+  cursor: crosshair;
+}
+.hide {
+  display: none;
+}
+.triangle::after {
+  content: '';
+  display: block;
+  position: absolute;
+  right: 0em;
+  bottom: 0em;
+  background-color: white;
+  background-clip: padding-box;
+  width: 0px;
+  height: 0px;
+  border-left: 5px solid transparent;
+  border-top: 5px solid transparent;
+  border-right: 5px solid rgba(128, 128, 128, .5);
+  border-bottom: 5px solid rgba(128, 128, 128, .5);
+}
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+li {
+  float: left;
+}
+
+li a, .dropbtn {
+  display: inline-block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover, .dropdown:hover .dropbtn {
+  background-color: red;
+}
+
+li.dropdown {
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content-item {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+label {
+  cursor: pointer;
+}
+.checkbox-icon {
+  display: none;
+}
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+.checkbox-icon:checked + label i:first-of-type {
+  display: inline-block;
+}
+.checkbox-icon + label i:first-of-type {
+  display: none;
+}
+.checkbox-icon:checked + label i:nth-of-type(2) {
+  display: none;
+}
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+label i, label span, .dropdown-content-item input, .dropdown-content-item label {
+  vertical-align: middle;
+}
