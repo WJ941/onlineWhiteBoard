@@ -139,3 +139,6 @@ label {
 label i, label span, .dropdown-content-item input, .dropdown-content-item label {
   vertical-align: middle;
 }
+input[type="radio"]:checked + label {
+  background-color: red;
+}

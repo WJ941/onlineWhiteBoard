@@ -52,4 +52,17 @@ class LineDrawer {
       sel('#line-width').innerText = value
     })
   }
+  handleMousedown(event) {
+    var x = event.layerX,
+        y = event.layerY
+    this.beginDraw(x, y)
+  }
+  handleMousemove(event) {
+    var x = event.layerX,
+        y = event.layerY
+    this.drawLine(x, y)
+  }
+  handleMouseup(event) {
+    this.endDraw()
+  }
 }

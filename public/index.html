@@ -5,17 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Online White Board</title>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <p><button id="id-clear" type="button">清空画布</button></p>
   <div>
     <ul class="noselect">
       <li class="dropdown">
         <a href="javascript:void(0)" class="dropbtn triangle">
-          <i class="material-icons">color_lens</i>
+          <i class="fas fa-paint-brush fa-2x"></i>
         </a>
         <div class="dropdown-content">
           <form name='colorselector'>
@@ -31,11 +30,12 @@
           </form>
         </div>
       </li>
-
+      <!-- 画笔 -->
       <li class="dropdown">
-        <a href="javascript:void(0)" class="dropbtn triangle">
-          <i class="material-icons">create</i>
-        </a>
+        <input type="radio" id="id-brush" class="hide" name="tool">
+        <label for="id-brush" class="dropbtn triangle">
+          <i class="fas fa-pencil-alt fa-2x"></i>
+        </label>
         <div class="dropdown-content">
           <form>
             <div class="dropdown-content-item">
@@ -46,21 +46,13 @@
           </form>
         </div>
       </li>
-
+    <!-- 文字 -->
       <li class="dropdown">
-        <a href="javascript:void(0)" class="dropbtn triangle">
-          <i class="material-icons">text_format</i>
-        </a>
+        <input type="radio" id="id-text" class="hide" name="tool">
+        <label for="id-text" class="dropbtn triangle">
+          <i class="fas fa-font fa-2x"></i>
+        </label>
         <div class="dropdown-content">
-            <div class="dropdown-content-item">
-              <input id="isText" type="checkbox" name="text" class="checkbox-icon"></input>
-              <label for="isText">
-                <span>文字</span>
-                <i class="material-icons">check_box</i>
-                <i class="material-icons">check_box_outline_blank</i>
-              </label>
-                
-            </div>
             <div class="dropdown-content-item">
               <label>字体大小</label>
               <input type="range" min="10" max="60" value="1" step="2" name="font-size"></input>
@@ -68,37 +60,84 @@
             </div>
         </div>
       </li>
-      
+      <!-- 橡皮擦 -->
+      <li class="dropdown">
+        <input type="radio" id="id-eraser" class="hide" name="tool">
+        <label for="id-eraser" class="dropbtn triangle">
+          <i class="fas fa-eraser fa-2x"></i>
+        </label>
+        <div class="dropdown-content">
+            <div class="dropdown-content-item">
+              <label>大小</label>
+              <input type="range" min="10" max="60" value="1" step="2" name="eraser-size"></input>
+              <span id="eraser-size">1</span>
+            </div>
+        </div>
+      </li>
+      <!-- 清空画布 -->
+      <li class="dropdown">
+        <input type="button" id="id-clear" class="hide" name="tool">
+        <label for="id-clear" class="dropbtn triangle">
+          <i class="fas fa-trash-alt fa-2x"></i>
+        </label>
+      </li>
     </ul>
-
   </div>
   
-  
-  
-
-  <canvas id="id-canvas" width="500" height="500"></canvas>
+  <!-- <canvas id="id-canvas" width="500" height="500"></canvas> -->
   <textarea id="id-textarea" autofocus class="hide"></textarea>
 </body>
 <script src="./wsClient.js"></script>
 <script src="./board.js"></script>
 <script src="./textarea.js"></script>
 <script src="./lineDrawer.js"></script>
+<script src="./eraser.js"></script>
 <script src="./utilitys.js"></script>
 
 <script>
 var _main = function() {
    // dom 对象
   var clearBtn = sel('#id-clear')
-  var canvas = sel('#id-canvas')
+  // var canvas = sel('#id-canvas')
+
+  //Create canvas with the device resolution.
+  var canvas = createHiDPICanvas(500, 500);
+  document.body.appendChild(canvas)
   var ctx = canvas.getContext('2d')
   var colorRadios = selAll('input[name="color"]')
   var colorPicker = sel('#id-color-picker')
   var lineWidthInput = sel('input[name="line-width"]')
-  var isTextInput = sel('input[name="text"]')
-  var textarea = sel('#id-textarea')
+  var textareaElem = sel('#id-text')
   var fontSizeInput = sel('input[name="font-size"]')
   var wsClient = new WSClient()
-  var board = new Board(canvas, textarea, clearBtn, colorRadios, colorPicker,lineWidthInput, fontSizeInput, isTextInput, wsClient)
+  var eraserElem = sel('#id-eraser')
+  var brushElem = sel('#id-brush')
+  var textareaInput= sel('#id-textarea')
+  var board = new Board(canvas, wsClient)
+  var eraser = new Eraser(board)
+  var brush = new LineDrawer(board, colorRadios, colorPicker, lineWidthInput)
+  var textarea = new Textarea(board, textareaInput,fontSizeInput)
+  addListener(eraserElem, 'click', event => {
+    if(event.target.checked === true) {
+      board.changeTool(eraser)
+    }
+  })
+  addListener(brushElem, 'click', event => {
+    if(event.target.checked === true) {
+      board.changeTool(brush)
+    }
+  })
+  addListener(clearBtn, 'click', event => {
+    board.clearBoard()
+  })
+  addListener(textareaElem, 'click', event => {
+    if(event.target.checked === true) {
+      board.changeTool(textarea)
+      board.canvas.classList.add('crosshair-cursor')
+      return
+    }
+    board.canvas.classList.remove('crosshair-cursor')
+  })
 }
 _main()
 </script>
