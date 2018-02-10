@@ -7,7 +7,8 @@
   <title>Online White Board</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./style/styles.css">
+  <link rel="stylesheet" href="./style/modal.css">
 </head>
 <body>
   <div>
@@ -81,18 +82,37 @@
           <i class="fas fa-trash-alt fa-2x"></i>
         </label>
       </li>
+      <!-- 邀请其他人 -->
+      <li class="dropdown">
+        <input type="button" id="id-invite-btn" class="hide">
+        <label for="id-invite-btn" class="dropbtn triangle">
+          <i class="fas fa-user-plus  fa-2x"></i>
+        </label>
+      </li>
+
+
     </ul>
   </div>
   
   <!-- <canvas id="id-canvas" width="500" height="500"></canvas> -->
   <textarea id="id-textarea" autofocus class="hide"></textarea>
+
+    <!-- The Modal -->
+  <div id="id-modal-invite" class="modal hide">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close" id="id-modal-close">&times;</span>
+      <p id="id-modal-content"></p>
+    </div>
+  </div>
 </body>
 <script src="./wsClient.js"></script>
-<script src="./board.js"></script>
-<script src="./textarea.js"></script>
-<script src="./lineDrawer.js"></script>
-<script src="./eraser.js"></script>
-<script src="./utilitys.js"></script>
+<script src="./scripts/board.js"></script>
+<script src="./scripts/tools/textarea.js"></script>
+<script src="./scripts/tools/pen.js"></script>
+<script src="./scripts/tools/eraser.js"></script>
+<script src="./scripts/utilitys.js"></script>
 
 <script>
 var _main = function() {
@@ -101,7 +121,7 @@ var _main = function() {
   // var canvas = sel('#id-canvas')
 
   //Create canvas with the device resolution.
-  var canvas = createHiDPICanvas(500, 500);
+  var canvas = createHiDPICanvas(1000, 1000);
   document.body.appendChild(canvas)
   var ctx = canvas.getContext('2d')
   var colorRadios = selAll('input[name="color"]')
@@ -109,22 +129,27 @@ var _main = function() {
   var lineWidthInput = sel('input[name="line-width"]')
   var textareaElem = sel('#id-text')
   var fontSizeInput = sel('input[name="font-size"]')
-  var wsClient = new WSClient()
+  var eraserSizeInput = sel('input[name="eraser-size"]')
+  var wsClient = new WSClient(window.location.pathname.slice(1))
   var eraserElem = sel('#id-eraser')
-  var brushElem = sel('#id-brush')
+  var penElem = sel('#id-brush')
   var textareaInput= sel('#id-textarea')
+  var inviteBtn = sel('#id-invite-btn')
+  var inviteModal = sel('#id-modal-invite')
+  var closeModal = sel('#id-modal-close')
   var board = new Board(canvas, wsClient)
-  var eraser = new Eraser(board)
-  var brush = new LineDrawer(board, colorRadios, colorPicker, lineWidthInput)
+  var eraser = new Eraser(board,eraserSizeInput, wsClient)
+  var pen = new Pen(board, colorRadios, colorPicker, lineWidthInput, wsClient)
   var textarea = new Textarea(board, textareaInput,fontSizeInput)
+
   addListener(eraserElem, 'click', event => {
     if(event.target.checked === true) {
       board.changeTool(eraser)
     }
   })
-  addListener(brushElem, 'click', event => {
+  addListener(penElem, 'click', event => {
     if(event.target.checked === true) {
-      board.changeTool(brush)
+      board.changeTool(pen)
     }
   })
   addListener(clearBtn, 'click', event => {
@@ -138,6 +163,67 @@ var _main = function() {
     }
     board.canvas.classList.remove('crosshair-cursor')
   })
+  addListener(inviteBtn, 'click', event => {
+    inviteModal.classList.remove('hide')
+    makeInviteRequest()
+
+  })
+  addListener(closeModal, 'click', event => {
+    inviteModal.classList.add('hide')
+  })
+  var changeCnctState = function() {
+    if(!board.isConnected) {
+      return
+    }
+    wsClient.receiveMsg = function(event) {
+      var data = JSON.parse(event.data)
+      var tool = data.tool
+      log('tool : ', tool)
+  
+      switch(tool) {
+        case 'pen':
+          pen.receiveWsData(data)
+          break
+        case 'erase':
+          eraser.receiveWsData(data)
+          break
+        default:
+          log('no tool')
+      }
+    }
+  }
+  changeCnctState()
+  function makeInviteRequest() {
+    httpRequest = new XMLHttpRequest();
+    if (!httpRequest) {
+      log('Giving up :( Cannot create an XMLHTTP instance');
+      return false;
+    }
+    httpRequest.onreadystatechange = alertContents;
+    httpRequest.open('GET', 'http://localhost:3000/invite');
+    httpRequest.send();
+  }
+
+  function alertContents() {
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+      if (httpRequest.status === 200) {
+        var res = JSON.parse(httpRequest.responseText)
+        var router1 = res[0]
+        var router2 = res[1]
+        window.history.pushState({}, 'index', router1)
+        wsClient = new WSClient(window.location.pathname.slice(1))
+        sel('#id-modal-content').innerText = 'http://localhost:3000/' + router2 
+        board.isConnected = true
+        changeCnctState()
+      } else {
+        log('There was a problem with the request.');
+      }
+    }
+  }
+  if(window.location.pathname.slice(1).length > 0) {
+   board.isConnected = true
+   changeCnctState()
+  }
 }
 _main()
 </script>

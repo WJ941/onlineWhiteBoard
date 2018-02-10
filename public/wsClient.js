@@ -1,11 +1,15 @@
 // Create WebSocket connection.
 class WSClient {
-    constructor() {
-      this.socket = new WebSocket('ws://localhost:3000', 'echo-protocol')
+    constructor(url) {
+      this.url = url
+      this.socket = new WebSocket('ws://localhost:3000/' + this.url, 'echo-protocol')
       this.receiveMsg = null
       this.init()
       this.setupInputs()
     }
+    // resetSocket(url) {
+
+    // }
     init() {
       this.receiveMsg = function(event) {
         console.log('Message from server ', event.data)
@@ -32,8 +36,8 @@ class WSClient {
         } catch(e) {
             console.log("error: " , e)
         }
-        // board.endDraw()
       })
     }
+    
 }
 

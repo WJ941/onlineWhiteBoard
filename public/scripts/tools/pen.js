@@ -1,5 +1,5 @@
-class LineDrawer {
-  constructor(board, colorRadios, colorPicker, lineWidthInput) {
+class Pen {
+  constructor(board, colorRadios, colorPicker, lineWidthInput, wsClient) {
     this.board = board
     this.ctx = this.board.ctx
     this.colorRadios = colorRadios
@@ -8,6 +8,14 @@ class LineDrawer {
     this.strokeStyle = 'black'
     this.lineWidth = "1"
     this.enableDraw = false
+    this.wsClient = wsClient
+    this.drawData = {
+      tool: 'pen',
+      state: null,
+      args: null,
+    }
+    this.x = null
+    this.y = null
     this.setupInputs()
   }
   beginDraw(x, y) {
@@ -17,12 +25,13 @@ class LineDrawer {
   }
   drawLine(x, y) {
     if(!this.enableDraw) {
-      return
+      return false
     }
     this.ctx.strokeStyle = this.strokeStyle
     this.ctx.lineWidth = this.lineWidth
     this.ctx.lineTo(x, y)
     this.ctx.stroke()
+    return true
   }
   endDraw() {
     this.enableDraw = false
@@ -56,13 +65,52 @@ class LineDrawer {
     var x = event.layerX,
         y = event.layerY
     this.beginDraw(x, y)
+    if(!this.board.isConnected) {
+      return
+    }
+    this.sendWsData('beginDraw', x, y)
   }
   handleMousemove(event) {
     var x = event.layerX,
         y = event.layerY
-    this.drawLine(x, y)
+    if(this.drawLine(x, y) && this.board.isConnected) {
+      this.sendWsData('drawLine', x, y)
+    }
   }
   handleMouseup(event) {
     this.endDraw()
+    if(!this.board.isConnected) {
+      return
+    }
+    this.sendWsData('endDraw')
+  }
+
+  sendWsData(method, x, y) {
+    var args = {
+      x: x,
+      y: y,
+      color: this.strokeStyle,
+      width: this.lineWidth,
+    }
+    var tool = 'pen'
+    this.wsClient.sendMsg({
+      tool: tool,
+      method: method,
+      args: args,
+    })
+  }
+  receiveWsData(data) {
+    log('ws data: ', data)
+    var method = data.method
+    var {x, y, color, width} = data.args
+    if(color) {
+      this.strokeStyle = color
+    }
+    if(width) {
+      this.lineWidth = width
+    }
+    if(this[method]) {
+      this[method](x, y)
+    }
   }
 }

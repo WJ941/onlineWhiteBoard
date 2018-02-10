@@ -5,14 +5,28 @@ var http = require('http');
 var fs = require('fs');
 var uuidv4 = require('uuid/v4')
 var path = require('path')
-
+var randomRoutePairs = []
 const express = require('express')
 const app = express()
 app.set('port', 3000)
 app.use(express.static(path.join(__dirname, 'public')))
+var randomStr = function(n) {
+  return Math.random().toString(16).substr(2, 2 + n)
+}
+app.get('/invite',  function (req, res) {
+  var pair = [randomStr(6), randomStr(6)]
+  randomRoutePairs.push(pair)
+  for(var i = 0; i< pair.length; i++) {
+    var r = '/' + pair[i]
+    app.get(r, function(req, res) {
+      res.sendFile(__dirname + '/public/index.html')
+    })
+  }
+  res.send(pair)
+})
 // Listen for requests
 var server = app.listen(app.get('port'), function() {
-    var port = server.address().port;
+    var port = server.address().port
     console.log('You are listening on port ' + port)
 })
 
@@ -29,7 +43,7 @@ wsServer = new WebSocketServer({
  
 function originIsAllowed(origin) {
   // put logic here to detect whether the specified origin is allowed.
-  return true;
+  return true
 }
  
 wsServer.on('request', function(request) {
@@ -39,20 +53,38 @@ wsServer.on('request', function(request) {
       console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.')
       return
     }
-    
+    var id = request.resourceURL.path.slice(1)
+    if(!id) {
+      request.reject()
+      console.log((new Date()) + ' Connection from id ' + request.origin + ' rejected.')
+      return
+    }
     var connection = request.accept('echo-protocol', request.origin);
-    connection.id = uuidv4()
     clients.push(connection)
+    connection.id = id
+    var clientFilter = function() {
+      var pair = randomRoutePairs.find( p => {
+        return p.includes(connection.id)
+      })
+      console.log('randomRoutePairs: ', randomRoutePairs)
+      console.log('pair: ', pair, connection.id)
+      pair = pair.filter( id => 
+        id !== connection.id
+      )
+      // ['aaaaa', 'bbbbbb','ccccccc'] => ['aaaaa', 'bbbbbb']
+      var invitedClients = clients.filter( c => 
+        pair.includes(c.id)
+      )
+      return invitedClients
+    }
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
             console.log('Received Message: ' + message.utf8Data + ' from client ' + connection.id)
             console.log('client amount: ', clients.length)
-            // connection.sendUTF(message.utf8Data);
-            // 分发消息到每个client
-            for(var i = 0; i < clients.length; i++) {
-                if(connection.id !== clients[i].id) {
-                    clients[i].sendUTF(message.utf8Data)
-                }
+            // 分发消息到每个邀请的client
+            var invitedClients = clientFilter()
+            for(var i = 0; i < invitedClients.length; i++) {
+              invitedClients[i].sendUTF(message.utf8Data)
             }
         }
         else if (message.type === 'binary') {
@@ -64,5 +96,5 @@ wsServer.on('request', function(request) {
         console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.')
         var cIndex = clients.findIndex( client => client.id === connection.id)
         clients.splice(cIndex, 1)
-    });
+    })
 })

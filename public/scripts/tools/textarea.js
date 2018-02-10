@@ -34,15 +34,6 @@ class Textarea {
   setTextCB(func) {
     this.handleTextsCB = func
   }
-  // handleClick(event) {
-  //   var text = event.target.value
-  //   if(text.length < 1) {
-  //     return
-  //   }
-  //   this.clear()
-  //   this.hide()
-  //   this.handleTextsCB(text, this.fontSize)
-  // }
   moveTo(x, y) {
     var width = this.board.canvas.offsetLeft + this.board.width - x
     var height = this.board.canvas.offsetTop + this.board.height - y
@@ -74,5 +65,33 @@ class Textarea {
     addListener(this.fontSizeInput, 'change', event => {
       this.setFontSize(event.target.value)
     })
+  }
+
+  sendWsData(method, x, y) {
+    // var args = {
+    //   x: x,
+    //   y: y,
+    //   color: this.strokeStyle,
+    //   width: this.lineWidth,
+    // }
+    // var tool = 'pen'
+    // this.wsClient.sendMsg({
+    //   tool: tool,
+    //   method: method,
+    //   args: args,
+    // })
+  }
+  receiveWsData(data) {
+    // var method = data.method
+    // var {x, y, color, width} = data.args
+    // if(color) {
+    //   this.strokeStyle = color
+    // }
+    // if(width) {
+    //   this.lineWidth = width
+    // }
+    // if(this[method]) {
+    //   this[method](x, y)
+    // }
   }
 }

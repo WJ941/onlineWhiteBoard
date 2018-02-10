@@ -6,14 +6,13 @@ class Board {
     this.ctx = this.canvas.getContext('2d')
     this.width = this.canvas.width
     this.height = this.canvas.height
-    this.wsClient = wsClient
     this.tool = null
+    this.wsClient = wsClient
     //运行中常改变的状态
     this.curFontFamily = 'sans-serif'
 
-    this.isConnected = true
+    this.isConnected = false
     this.isText = false
-    this.init()
     this.setupInputs()
   }
   clearBoard() {
@@ -54,11 +53,6 @@ class Board {
     var isChecked = event.target.checked
     this.setIsText(isChecked)
   }
-  init() {
-    this.wsClient.receiveMsg = function(event) {
-      log('wsclient: ', event.data)
-    }
-  }
   setupInputs() {
     addListener(this.canvas, 'mousedown', event => {
       this.tool && this.tool.handleMousedown && this.tool.handleMousedown(event)
@@ -72,11 +66,10 @@ class Board {
     addListener(this.canvas, 'click', event => {
       this.tool && this.tool.handleClick && this.tool.handleClick(event)
     })
-    
-    // addListener(this.canvas, 'click', this.handleClick.bind(this))
-    // addListener(this.isTextInput, 'click', this.handleIsText.bind(this))
   }
+
   changeTool(newTool) {
     this.tool = newTool
+    // this.wsClient.receiveMsg = this.tool.receiveWsData
   }
 }
