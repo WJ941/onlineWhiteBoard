@@ -1,10 +1,9 @@
 class Pen {
-  constructor(board, colorRadios, colorPicker, lineWidthInput, wsClient) {
+  constructor(board, wsClient) {
     this.board = board
     this.ctx = this.board.ctx
-    this.colorRadios = colorRadios
-    this.colorPicker = colorPicker
-    this.lineWidthInput = lineWidthInput
+    this.lineWidthInput = sel('input[name="line-width"]')
+    this.elem = sel('#id-brush')
     this.strokeStyle = 'black'
     this.lineWidth = "1"
     this.enableDraw = false
@@ -27,7 +26,7 @@ class Pen {
     if(!this.enableDraw) {
       return false
     }
-    this.ctx.strokeStyle = this.strokeStyle
+    this.ctx.strokeStyle = this.board.color
     this.ctx.lineWidth = this.lineWidth
     this.ctx.lineTo(x, y)
     this.ctx.stroke()
@@ -43,18 +42,6 @@ class Pen {
     this.lineWidth = value
   }
   setupInputs() {
-    for(var i = 0; i < this.colorRadios.length; i++) {
-      var radio = this.colorRadios[i]
-      addListener(radio, 'click', event => {
-        var value = event.target.value
-        this.setStrokeStyle(value)
-      })
-    }
-    addListener(this.colorPicker, 'change', event => {
-      var value = event.target.value
-      this.setStrokeStyle(value)
-    })
-  
     addListener(this.lineWidthInput, 'input', event => {
       var value = event.target.value
       this.setLineWidth(value)

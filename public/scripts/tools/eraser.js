@@ -1,11 +1,12 @@
 class Eraser {
-  constructor(board, eraserSizeInput, wsClient) {
+  constructor(board, wsClient) {
     this.board = board
     this.eraseWidth = 10
     this.eraseHeight = 10
     this.enableErase = false
     this.wsClient = wsClient
-    this.eraserSizeInput = eraserSizeInput
+    this.eraserSizeInput = sel('input[name="eraser-size"]')
+    this.elem = sel('#id-eraser')
     this.eraserSize =  10
     this.setupInputs()
   }

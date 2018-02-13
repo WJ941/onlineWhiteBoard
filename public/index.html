@@ -5,36 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Online White Board</title>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
   <link rel="stylesheet" href="./style/styles.css">
   <link rel="stylesheet" href="./style/modal.css">
+  <link rel="stylesheet" href="./style/canvas.css">
+  <link rel="stylesheet" href="./style/tooltip.css">
 </head>
 <body>
+  <input type="radio" id="id-text" class="hide" name="tool">
   <div>
     <ul class="noselect">
+      <!-- 颜色选择 -->
       <li class="dropdown">
-        <a href="javascript:void(0)" class="dropbtn triangle">
-          <i class="fas fa-paint-brush fa-2x"></i>
-        </a>
+        <input type="radio" id="id-color" class="hide" name="tool">
+        <label for="id-color" class="dropbtn">
+          <i id="id-color-icon" class="fas fa-paint-brush fa-2x"></i>
+        </label>
         <div class="dropdown-content">
-          <form name='colorselector'>
-            <div class="dropdown-content-item">
-              <label for="">选择颜色</label>
-              <input type="radio" class="black" name="color" value="black" checked>
-              <input type="radio" class="red" name="color" value="red">
-              <input type="radio" class="yellow" name="color" value="yellow">
-            </div>
-            <div class="dropdown-content-item">
-              <input id="id-color-picker" type="color" value="#ff0000">
-            </div>
-          </form>
+          <div class="dropdown-content-item">
+            <label for="">颜色</label>
+            <input type="radio" class="black" name="color" value="black" checked>
+            <input type="radio" class="red" name="color" value="red">
+            <input type="radio" class="yellow" name="color" value="yellow">
+          </div>
+          <div class="dropdown-content-item">
+            <input id="id-color-picker" type="color" value= '#ff0000'>
+          </div>
         </div>
       </li>
       <!-- 画笔 -->
-      <li class="dropdown">
+      <li class="dropdown" data-title="画笔">
         <input type="radio" id="id-brush" class="hide" name="tool">
-        <label for="id-brush" class="dropbtn triangle">
+        <label for="id-brush" class="dropbtn">
           <i class="fas fa-pencil-alt fa-2x"></i>
         </label>
         <div class="dropdown-content">
@@ -48,12 +50,11 @@
         </div>
       </li>
     <!-- 文字 -->
-      <li class="dropdown">
-        <input type="radio" id="id-text" class="hide" name="tool">
-        <label for="id-text" class="dropbtn triangle">
+      <li class="dropdown" data-title="写字">
+        <label for="id-text" class="dropbtn">
           <i class="fas fa-font fa-2x"></i>
         </label>
-        <div class="dropdown-content">
+        <div class="dropdown-content"  for="id-text">
             <div class="dropdown-content-item">
               <label>字体大小</label>
               <input type="range" min="10" max="60" value="1" step="2" name="font-size"></input>
@@ -62,167 +63,92 @@
         </div>
       </li>
       <!-- 橡皮擦 -->
-      <li class="dropdown">
+      <li class="dropdown" data-title="橡皮擦">
         <input type="radio" id="id-eraser" class="hide" name="tool">
-        <label for="id-eraser" class="dropbtn triangle">
+        <label for="id-eraser" class="dropbtn">
           <i class="fas fa-eraser fa-2x"></i>
         </label>
         <div class="dropdown-content">
             <div class="dropdown-content-item">
-              <label>大小</label>
+              <label>橡皮擦大小</label>
               <input type="range" min="10" max="60" value="1" step="2" name="eraser-size"></input>
               <span id="eraser-size">1</span>
             </div>
         </div>
       </li>
       <!-- 清空画布 -->
-      <li class="dropdown">
-        <input type="button" id="id-clear" class="hide" name="tool">
-        <label for="id-clear" class="dropbtn triangle">
+      <li class="dropdown" data-title="清空">
+        <input type="radio" id="id-clear" class="hide" name="tool">
+        <label for="id-clear" class="dropbtn">
           <i class="fas fa-trash-alt fa-2x"></i>
         </label>
       </li>
-      <!-- 邀请其他人 -->
-      <li class="dropdown">
-        <input type="button" id="id-invite-btn" class="hide">
-        <label for="id-invite-btn" class="dropbtn triangle">
-          <i class="fas fa-user-plus  fa-2x"></i>
+      <!-- 撤销 -->
+      <li class="dropdown" data-title="清空">
+        <input type="button" id="id-undo" class="hide">
+        <label for="id-undo" class="dropbtn">
+          <i class="fas fa-reply fa-2x"></i>
         </label>
       </li>
-
-
+      <!-- 恢复 -->
+      <li class="dropdown" data-title="清空">
+        <input type="button" id="id-recover" class="hide">
+        <label for="id-recover" class="dropbtn">
+          <i class="fas fa-share fa-2x"></i>
+        </label>
+      </li>
+      <!-- 邀请其他人 -->
+      <li class="dropdown modal" data-title="邀请其他人">
+        <input type="radio" id="id-invite-btn" class="hide" name="tool">
+        <label for="id-invite-btn" class="dropbtn">
+          <i class="fas fa-user-plus  fa-2x"></i>
+        </label>
+        <div class="modal-overlay">
+          <div class="modal-wrap">
+            <input type="radio" id="id-close-modal" class="hide" name="tool">
+            <label for="id-close-modal" class="close">
+                <i class="fas fa-times"></i>
+            </label>
+            <div class="modal-wrap-content">
+              <input id="id-modal-content" type="text" value="some url" disabled>
+              <input type="button" id="id-copy" class="hide">
+              <label for="id-copy">
+                <i class="fas fa-copy fa-lg"></i>
+              </label>
+            </div>
+          </div>
+        </div>
+      </li>
     </ul>
   </div>
-  
-  <!-- <canvas id="id-canvas" width="500" height="500"></canvas> -->
   <textarea id="id-textarea" autofocus class="hide"></textarea>
-
-    <!-- The Modal -->
-  <div id="id-modal-invite" class="modal hide">
-
-    <!-- Modal content -->
-    <div class="modal-content">
-      <span class="close" id="id-modal-close">&times;</span>
-      <p id="id-modal-content"></p>
-    </div>
-  </div>
 </body>
 <script src="./wsClient.js"></script>
 <script src="./scripts/board.js"></script>
 <script src="./scripts/tools/textarea.js"></script>
 <script src="./scripts/tools/pen.js"></script>
 <script src="./scripts/tools/eraser.js"></script>
+<script src="./scripts/tools/colorManager.js"></script>
+<script src="./scripts/drawhistory.js"></script>
 <script src="./scripts/utilitys.js"></script>
-
 <script>
 var _main = function() {
-   // dom 对象
-  var clearBtn = sel('#id-clear')
-  // var canvas = sel('#id-canvas')
-
-  //Create canvas with the device resolution.
-  var canvas = createHiDPICanvas(1000, 1000);
-  document.body.appendChild(canvas)
-  var ctx = canvas.getContext('2d')
-  var colorRadios = selAll('input[name="color"]')
-  var colorPicker = sel('#id-color-picker')
-  var lineWidthInput = sel('input[name="line-width"]')
-  var textareaElem = sel('#id-text')
-  var fontSizeInput = sel('input[name="font-size"]')
-  var eraserSizeInput = sel('input[name="eraser-size"]')
   var wsClient = new WSClient(window.location.pathname.slice(1))
-  var eraserElem = sel('#id-eraser')
-  var penElem = sel('#id-brush')
-  var textareaInput= sel('#id-textarea')
-  var inviteBtn = sel('#id-invite-btn')
-  var inviteModal = sel('#id-modal-invite')
-  var closeModal = sel('#id-modal-close')
-  var board = new Board(canvas, wsClient)
-  var eraser = new Eraser(board,eraserSizeInput, wsClient)
-  var pen = new Pen(board, colorRadios, colorPicker, lineWidthInput, wsClient)
-  var textarea = new Textarea(board, textareaInput,fontSizeInput)
+  var board = new Board(wsClient)
 
-  addListener(eraserElem, 'click', event => {
-    if(event.target.checked === true) {
-      board.changeTool(eraser)
-    }
-  })
-  addListener(penElem, 'click', event => {
-    if(event.target.checked === true) {
-      board.changeTool(pen)
-    }
-  })
-  addListener(clearBtn, 'click', event => {
-    board.clearBoard()
-  })
-  addListener(textareaElem, 'click', event => {
-    if(event.target.checked === true) {
-      board.changeTool(textarea)
-      board.canvas.classList.add('crosshair-cursor')
-      return
-    }
-    board.canvas.classList.remove('crosshair-cursor')
-  })
-  addListener(inviteBtn, 'click', event => {
-    inviteModal.classList.remove('hide')
-    makeInviteRequest()
-
-  })
-  addListener(closeModal, 'click', event => {
-    inviteModal.classList.add('hide')
-  })
-  var changeCnctState = function() {
-    if(!board.isConnected) {
-      return
-    }
-    wsClient.receiveMsg = function(event) {
-      var data = JSON.parse(event.data)
-      var tool = data.tool
-      log('tool : ', tool)
+  //需要添加crosshair样式
+  // addListener(textareaElem, 'click', event => {
+  //   if(event.target.checked === true) {
+  //     board.changeTool(textarea)
+  //     board.canvas.classList.add('crosshair-cursor')
+  //     return
+  //   }
+  //   board.canvas.classList.remove('crosshair-cursor')
+  // })
   
-      switch(tool) {
-        case 'pen':
-          pen.receiveWsData(data)
-          break
-        case 'erase':
-          eraser.receiveWsData(data)
-          break
-        default:
-          log('no tool')
-      }
-    }
-  }
-  changeCnctState()
-  function makeInviteRequest() {
-    httpRequest = new XMLHttpRequest();
-    if (!httpRequest) {
-      log('Giving up :( Cannot create an XMLHTTP instance');
-      return false;
-    }
-    httpRequest.onreadystatechange = alertContents;
-    httpRequest.open('GET', 'http://localhost:3000/invite');
-    httpRequest.send();
-  }
-
-  function alertContents() {
-    if (httpRequest.readyState === XMLHttpRequest.DONE) {
-      if (httpRequest.status === 200) {
-        var res = JSON.parse(httpRequest.responseText)
-        var router1 = res[0]
-        var router2 = res[1]
-        window.history.pushState({}, 'index', router1)
-        wsClient = new WSClient(window.location.pathname.slice(1))
-        sel('#id-modal-content').innerText = 'http://localhost:3000/' + router2 
-        board.isConnected = true
-        changeCnctState()
-      } else {
-        log('There was a problem with the request.');
-      }
-    }
-  }
   if(window.location.pathname.slice(1).length > 0) {
    board.isConnected = true
-   changeCnctState()
+   board.changeCnctState()
   }
 }
 _main()

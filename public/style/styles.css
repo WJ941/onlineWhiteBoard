@@ -3,8 +3,11 @@
   margin: 0em;
   padding: 0em;
 }
+body {
+  overflow: hidden;
+}
 canvas {
-  margin-top: 2rem;
+  margin-top: 1rem;
   border: 1px solid black;
 }
 input[type="radio"] {
@@ -48,56 +51,41 @@ textarea:focus {
 .hide {
   display: none;
 }
-.triangle::after {
-  content: '';
-  display: block;
-  position: absolute;
-  right: 0em;
-  bottom: 0em;
-  background-color: white;
-  background-clip: padding-box;
-  width: 0px;
-  height: 0px;
-  border-left: 5px solid transparent;
-  border-top: 5px solid transparent;
-  border-right: 5px solid rgba(128, 128, 128, .5);
-  border-bottom: 5px solid rgba(128, 128, 128, .5);
-}
 ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: #333;
 }
-
-li {
-  float: left;
-}
-
-li a, .dropbtn {
+.dropbtn {
   display: inline-block;
   color: white;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
 }
-
-li a:hover, .dropdown:hover .dropbtn {
-  background-color: red;
+.dropdown label {
+  transition: all .5s ease;
 }
-
+.dropdown:hover label {
+  background-color: rgba(228, 228, 228, 0.82);
+}
 li.dropdown {
   display: inline-block;
+  color: rgba(0,0,0,0.2);
 }
-
+.fas {
+  color: rgba(0,0,0,0.8);
+}
 .dropdown-content {
-  display: none;
+  opacity: 0;
+  visibility: hidden;
   position: absolute;
   background-color: #f9f9f9;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
+  transition: all 0.3s ease;
 }
 
 .dropdown-content-item {
@@ -106,26 +94,14 @@ li.dropdown {
   text-decoration: none;
   display: block;
   text-align: left;
+  transition: all 0.3s ease;
 }
 label {
   cursor: pointer;
 }
-.checkbox-icon {
-  display: none;
-}
-.dropdown-content a:hover {background-color: #f1f1f1}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-.checkbox-icon:checked + label i:first-of-type {
-  display: inline-block;
-}
-.checkbox-icon + label i:first-of-type {
-  display: none;
-}
-.checkbox-icon:checked + label i:nth-of-type(2) {
-  display: none;
+.dropdown > input:checked ~ .dropdown-content {
+  opacity: 1;
+  visibility: visible;
 }
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */
@@ -138,7 +114,4 @@ label {
 }
 label i, label span, .dropdown-content-item input, .dropdown-content-item label {
   vertical-align: middle;
-}
-input[type="radio"]:checked + label {
-  background-color: red;
 }

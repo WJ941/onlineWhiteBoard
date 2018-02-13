@@ -1,0 +1,11 @@
+input[id="id-text"]:checked ~ canvas {
+  cursor: crosshair;
+}
+input[id="id-text"]:checked + div label[for="id-text"] {
+  background-color: rgba(228, 228, 228, 0.82);
+}
+input[id="id-text"]:checked + div .dropdown-content[for="id-text"] {
+  /* display: inline-block; */
+  opacity: 1;
+  visibility: visible;
+}

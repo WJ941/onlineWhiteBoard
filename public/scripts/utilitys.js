@@ -19,10 +19,8 @@ var PIXEL_RATIO = (function () {
             ctx.msBackingStorePixelRatio ||
             ctx.oBackingStorePixelRatio ||
             ctx.backingStorePixelRatio || 1;
-  log('backing store pixel ratio: ', bsr)
   return dpr / bsr;
 })();
-
 
 createHiDPICanvas = function(w, h, ratio) {
   if (!ratio) { ratio = PIXEL_RATIO; }

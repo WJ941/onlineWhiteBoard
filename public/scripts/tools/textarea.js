@@ -1,9 +1,12 @@
 class Textarea {
-  constructor(board, textarea, fontSizeInput) {
+  constructor(board) {
     this.board = board
-    this.textarea = textarea
+    this.ctx = this.board.ctx
+    this.textarea = sel('#id-textarea')
+    this.elem = sel('#id-text')
     this.fontSize = 10
-    this.fontSizeInput = fontSizeInput
+    this.curFontFamily = 'sans-serif'
+    this.fontSizeInput = sel('input[name="font-size"]')
     this.layerX = 0
     this.layerY = 0
     this.handleTextsCB = null
@@ -55,7 +58,8 @@ class Textarea {
     // this.handleTextsCB(text, this.fontSize)
     var x = this.layerX
     var y = this.layerY + Number(this.fontSize)
-    this.board.fillText(text, x, y, this.fontSize)
+    this.ctx.font = this.fontSize + "px " + this.curFontFamily
+    this.ctx.fillText(text, x, y)
   }
   setInputs() {
     addListener(this.textarea, 'click', event => {
