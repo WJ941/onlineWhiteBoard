@@ -18,8 +18,12 @@ class DrawHistory {
       }
     img.src = lastDataUrl
   }
-  add(dataUrl) {
-    this.doneList.push(dataUrl)
+  saveCurCanvas() {
+    var dataUrl = this.canvas.toDataURL()
+    var list = this.doneList
+    if(list.length === 0 || dataUrl !== list[list.length - 1]) {
+      this.doneList.push(dataUrl)
+    }
   }
   undo() {
     if(this.doneList.length < 1) {

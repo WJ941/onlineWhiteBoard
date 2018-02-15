@@ -67,7 +67,10 @@ ul {
 .dropdown label {
   transition: all .5s ease;
 }
-.dropdown:hover label {
+.dropdown:hover > label {
+  background-color: rgba(228, 228, 228, 0.82);
+}
+.dropdown input:checked + label {
   background-color: rgba(228, 228, 228, 0.82);
 }
 li.dropdown {
@@ -114,4 +117,21 @@ label {
 }
 label i, label span, .dropdown-content-item input, .dropdown-content-item label {
   vertical-align: middle;
+}
+textarea {
+  border: 1px solid black;
+}
+.absolute {
+  position: absolute;
+}
+.button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
 }

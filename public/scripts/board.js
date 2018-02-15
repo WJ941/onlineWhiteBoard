@@ -9,6 +9,8 @@ class Board {
     this.undoBtn = sel('#id-undo')
     this.recoverBtn = sel('#id-recover')
     this.inviteModal = sel('#id-modal-invite')
+    this.savePDFBtn = sel('#id-save-pdf')
+    this.saveImgBtn = sel('#id-save-img')
     //
     this.colorManager = ColorManager.instance()
     this.ctx = this.canvas.getContext('2d')
@@ -39,8 +41,8 @@ class Board {
     })
     addListener(this.canvas, 'mouseup', event => {
       this.tool && this.tool.handleMouseup && this.tool.handleMouseup(event)
-      var dataUrl = this.canvas.toDataURL()
-      this.drawHistory.add(dataUrl)
+      this.drawHistory.saveCurCanvas()
+    
     })
     addListener(this.canvas, 'click', event => {
       this.tool && this.tool.handleClick && this.tool.handleClick(event)
@@ -65,6 +67,19 @@ class Board {
     addListener(this.recoverBtn, 'click', event => {
       this.drawHistory.recover()
     })
+
+    //保存按钮
+    addListener(this.saveImgBtn, 'click', event => {
+      downloadFile('download.png', this.canvas.toDataURL())
+    })
+    addListener(this.savePDFBtn, 'click', event => {
+      var imgData = this.canvas.toDataURL("image/png", 1.0);
+      var pdf = new jsPDF();
+    
+      pdf.addImage(imgData, 'PNG', 0, 0);
+      pdf.save("download.pdf");
+    })
+
   }
   init() {
     this.colorManager.addSubscriber( color => {
