@@ -24,11 +24,26 @@ app.get('/invite',  function (req, res) {
   }
   res.send(pair)
 })
+app.get('/shareid?', function(req, res) {
+  var clientId = req.query.clientid
+  var pair = randomRoutePairs.find( pair => {
+    return pair.includes(clientId)
+  })
+  if(pair) {
+    var shareid = pair.find( str => {
+      return str !== clientId
+    })
+    res.send(shareid)
+  }
+})
 // Listen for requests
 var server = app.listen(app.get('port'), function() {
     var port = server.address().port
     console.log('You are listening on port ' + port)
 })
+// app.get('/*', function(req, res) {
+
+// })
 
 var clients = []
 wsServer = new WebSocketServer({
@@ -67,7 +82,7 @@ wsServer.on('request', function(request) {
         return p.includes(connection.id)
       })
       console.log('randomRoutePairs: ', randomRoutePairs)
-      console.log('pair: ', pair, connection.id)
+      console.log(new Date() + ' pair: ', pair, connection.id)
       pair = pair.filter( id => 
         id !== connection.id
       )
@@ -79,17 +94,16 @@ wsServer.on('request', function(request) {
     }
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
-            console.log('Received Message: ' + message.utf8Data + ' from client ' + connection.id)
-            console.log('client amount: ', clients.length)
-            // 分发消息到每个邀请的client
-            var invitedClients = clientFilter()
-            for(var i = 0; i < invitedClients.length; i++) {
-              invitedClients[i].sendUTF(message.utf8Data)
-            }
+          console.log('Received Message: ' + message.utf8Data + ' from client ' + connection.id)
+          console.log('client amount: ', clients.length)
+          // 分发消息到每个邀请的client
+          var invitedClients = clientFilter()
+          for(var i = 0; i < invitedClients.length; i++) {
+            invitedClients[i].sendUTF(message.utf8Data)
+          }
         }
         else if (message.type === 'binary') {
             console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');
-            // connection.sendBytes(message.binaryData);
         }
     })
     connection.on('close', function(reasonCode, description) {

@@ -46,8 +46,19 @@ function base64Img2Blob(code){
   for (var i = 0; i < rawLength; ++i) {
     uInt8Array[i] = raw.charCodeAt(i)
   }
-
   return new Blob([uInt8Array], {type: contentType}); 
+}
+function base64Img2Binary(code){
+  var parts = code.split(';base64,')
+  var contentType = parts[0].split(':')[1]
+  var raw = window.atob(parts[1])
+  return raw
+  // var rawLength = raw.length
+  // var uInt8Array = new Uint8Array(rawLength)
+  // for (var i = 0; i < rawLength; ++i) {
+  //   uInt8Array[i] = raw.charCodeAt(i)
+  // }
+  // return new Blob([uInt8Array], {type: contentType}); 
 }
 function downloadFile(fileName, content){
   var aLink = document.createElement('a')
@@ -57,4 +68,49 @@ function downloadFile(fileName, content){
   aLink.download = fileName;
   aLink.href = URL.createObjectURL(blob)
   aLink.dispatchEvent(evt)
+}
+function AjaxGet(url, callback) {
+  var httpRequest = new XMLHttpRequest()
+  if (!httpRequest) {
+    log('Giving up :( Cannot create an XMLHTTP instance')
+    return false
+  }
+  httpRequest.onreadystatechange = function() {
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+      if (httpRequest.status === 200) {
+        // var res = JSON.parse(httpRequest.responseText)
+        callback(httpRequest.responseText)
+      } else {
+        log('There was a problem with the request.')
+      }
+    }
+  }
+  // httpRequest.open('GET', 'http://localhost:3000/invite')
+  httpRequest.open('GET', url)
+  httpRequest.send()
+}
+function copyText(element) {
+  window.getSelection().removeAllRanges()
+  var range = document.createRange()
+  range.selectNode(element)
+  window.getSelection().addRange(range)
+   try {
+     var successful = document.execCommand('copy')
+     var msg = successful ? 'successful' : 'unsuccessful'
+     log('Copy command was ' + msg)
+   } catch(err) {
+     log('Oops, unable to copy')
+   }
+ 
+   // Remove the selections - NOTE: Should use
+   // removeRange(range) when it is supported  
+   window.getSelection().removeAllRanges()
+}
+function IsJsonString(str) {
+  try {
+      JSON.parse(str);
+  } catch (e) {
+      return false;
+  }
+  return true;
 }

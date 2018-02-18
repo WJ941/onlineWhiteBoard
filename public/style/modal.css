@@ -12,7 +12,6 @@
   position: relative;
   opacity: 0;
   background-color: #fff;
-  width: 80%;
   padding: 2em;
   margin: 5em auto;
   border-radius: .5em;
@@ -41,18 +40,17 @@
   right: .3em;
   top: .3em;
 }
-.modal-wrap-content {
-  display: flex;
-  justify-content: space-between;
-  border: 1px solid #000;
-  border-radius: 5px;
-  padding: .5em;
-}
 .modal-wrap-content input {
   padding: 0.5em;
   width: 70%;
-  border: none;
 }
-.modal-wrap-content i {
-  line-height: 100%;
+@media screen and (min-width: 800px) {
+  .modal-wrap {
+    width: 80%;
+  }
+}
+@media screen and (min-width: 1300px) {
+  .modal-wrap {
+    width: 50%;
+  }
 }

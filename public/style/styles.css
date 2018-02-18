@@ -13,7 +13,6 @@ canvas {
 input[type="radio"] {
   -webkit-appearance: none;
   -moz-appearance: none;
-  appearance: none;
   border-radius: 50%;
   width: 30px;
   height: 30px;
@@ -75,7 +74,7 @@ ul {
 }
 li.dropdown {
   display: inline-block;
-  color: rgba(0,0,0,0.2);
+  /* color: rgba(0,0,0,0.2); */
 }
 .fas {
   color: rgba(0,0,0,0.8);
@@ -125,7 +124,7 @@ textarea {
   position: absolute;
 }
 .button {
-  background-color: #4CAF50; /* Green */
+  background-color: #333333; /* Green */
   border: none;
   color: white;
   padding: 8px 16px;
@@ -134,4 +133,11 @@ textarea {
   display: inline-block;
   font-size: 16px;
   cursor: pointer;
+}
+.mt-2 {
+  margin-top: 2em;
+}
+.input {
+  height: 34px;
+  font-size: 14px;
 }

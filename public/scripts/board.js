@@ -1,26 +1,28 @@
 // board对象和其方法
 class Board {
-  constructor(wsClient) {
+  constructor() {
     //Dom 对象
     this.canvas = createHiDPICanvas(1000, 1000)
     document.body.appendChild(this.canvas)
     this.clearBtn = sel('#id-clear')
     this.inviteBtn = sel('#id-invite-btn')
+    //
     this.undoBtn = sel('#id-undo')
     this.recoverBtn = sel('#id-recover')
-    this.inviteModal = sel('#id-modal-invite')
+    //
     this.savePDFBtn = sel('#id-save-pdf')
     this.saveImgBtn = sel('#id-save-img')
     //
+    this.copyLinkBtn = sel('#id-copy-link')
+    this.copyLinkInput = sel('#id-copy-input')
     this.colorManager = ColorManager.instance()
     this.ctx = this.canvas.getContext('2d')
     this.width = this.canvas.width
     this.height = this.canvas.height
     this.tool = null
-    this.wsClient = wsClient
+    this.wsClient = new WSClient()
     //运行中常改变的状态
     this.color = this.colorManager.curColor
-    this.isConnected = false
     this.tools = [
       new Pen(this, this.wsClient),
       new Eraser(this, this.wsClient),
@@ -41,8 +43,12 @@ class Board {
     })
     addListener(this.canvas, 'mouseup', event => {
       this.tool && this.tool.handleMouseup && this.tool.handleMouseup(event)
-      this.drawHistory.saveCurCanvas()
-    
+      this.drawHistory.add(this.canvas.toDataURL())
+      // this.wsClient.sendMsg(this.canvas.toDataURL())
+      var a = base64Img2Blob(this.canvas.toDataURL())
+      log('binary: ', a)
+
+      this.wsClient.sendMsg(a)
     })
     addListener(this.canvas, 'click', event => {
       this.tool && this.tool.handleClick && this.tool.handleClick(event)
@@ -58,7 +64,7 @@ class Board {
     })
     // 导航栏上的邀请按钮点击事件
     addListener(this.inviteBtn, 'click', event => {
-      event.target.checked === false ? this.makeInviteRequest() : null
+      this.wsClient.makeInviteRequest() 
     })
     //  撤销和恢复按钮
     addListener(this.undoBtn, 'click', event => {
@@ -73,13 +79,24 @@ class Board {
       downloadFile('download.png', this.canvas.toDataURL())
     })
     addListener(this.savePDFBtn, 'click', event => {
-      var imgData = this.canvas.toDataURL("image/png", 1.0);
-      var pdf = new jsPDF();
-    
-      pdf.addImage(imgData, 'PNG', 0, 0);
-      pdf.save("download.pdf");
+      // log('begin: ', Date.now())
+      var imgData = this.canvas.toDataURL("image/png", 1.0)
+      // log('finish todataurl: ', Date.now())
+      var pdf = new jsPDF()
+      pdf.addImage(imgData, 'PNG', 0, 0)
+      // log('finish addImage: ', Date.now())
+      pdf.save("download.pdf")
+      // log('save: ', Date.now())
     })
-
+    //复制链接按钮
+    addListener(this.copyLinkBtn, 'click', event => {
+      try {
+        copyText(this.copyLinkInput)
+        this.copyLinkBtn.innerText = "已复制"
+      } catch(e) {
+        console.log('Oops, unable ')
+      }
+    })
   }
   init() {
     this.colorManager.addSubscriber( color => {
@@ -91,53 +108,5 @@ class Board {
   }
   clearBoard() {
     this.ctx.clearRect(0, 0, this.width, this.height)
-  }
-  makeInviteRequest() {
-    var httpRequest = null
-    var alertContents = function() {
-      if (httpRequest.readyState === XMLHttpRequest.DONE) {
-        if (httpRequest.status === 200) {
-          var res = JSON.parse(httpRequest.responseText)
-          var router1 = res[0]
-          var router2 = res[1]
-          window.history.pushState({}, 'index', router1)
-          wsClient = new WSClient(window.location.pathname.slice(1))
-          sel('#id-modal-content').innerText = 'http://localhost:3000/' + router2 
-          board.isConnected = true
-          changeCnctState()
-        } else {
-          log('There was a problem with the request.');
-        }
-      }
-    }
-    httpRequest = new XMLHttpRequest()
-    if (!httpRequest) {
-      log('Giving up :( Cannot create an XMLHTTP instance');
-      return false;
-    }
-    httpRequest.onreadystatechange = alertContents;
-    httpRequest.open('GET', 'http://localhost:3000/invite');
-    httpRequest.send();
-  }
-  changeCnctState() {
-    if(!board.isConnected) {
-      return
-    }
-    wsClient.receiveMsg = function(event) {
-      var data = JSON.parse(event.data)
-      var tool = data.tool
-      log('tool : ', tool)
-  
-      switch(tool) {
-        case 'pen':
-          pen.receiveWsData(data)
-          break
-        case 'erase':
-          eraser.receiveWsData(data)
-          break
-        default:
-          log('no tool')
-      }
-    }
   }
 }

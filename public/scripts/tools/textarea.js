@@ -74,7 +74,7 @@ class Textarea {
     this.ctx.font = this.fontSize + "px " + this.curFontFamily
     this.ctx.fillStyle = this.board.color
     this.ctx.fillText(text, x, y)
-    this.board.drawHistory.saveCurCanvas()
+    this.board.drawHistory.add(this.board.canvas.toDataURL())
   }
   getDefaultFontFamily() {
     return css(this.textarea, 'font-family')

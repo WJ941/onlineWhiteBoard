@@ -52,23 +52,18 @@ class Pen {
     var x = event.layerX,
         y = event.layerY
     this.beginDraw(x, y)
-    if(!this.board.isConnected) {
-      return
-    }
+   
     this.sendWsData('beginDraw', x, y)
   }
   handleMousemove(event) {
     var x = event.layerX,
         y = event.layerY
-    if(this.drawLine(x, y) && this.board.isConnected) {
+    if(this.drawLine(x, y)) {
       this.sendWsData('drawLine', x, y)
     }
   }
   handleMouseup(event) {
     this.endDraw()
-    if(!this.board.isConnected) {
-      return
-    }
     this.sendWsData('endDraw')
   }
 
@@ -80,11 +75,11 @@ class Pen {
       width: this.lineWidth,
     }
     var tool = 'pen'
-    this.wsClient.sendMsg({
-      tool: tool,
-      method: method,
-      args: args,
-    })
+    // this.wsClient.sendMsg({
+    //   tool: tool,
+    //   method: method,
+    //   args: args,
+    // })
   }
   receiveWsData(data) {
     log('ws data: ', data)
