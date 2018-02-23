@@ -37,13 +37,7 @@ input:checked {
 .yellow {
   background-color: yellow;
 }
-textarea {
-  border: none;
-}
-textarea:focus {
-  outline: none;
-  padding: 0;
-}
+
 .crosshair-cursor {
   cursor: crosshair;
 }
@@ -55,6 +49,7 @@ ul {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  display: flex;
 }
 .dropbtn {
   display: inline-block;
@@ -119,6 +114,13 @@ label i, label span, .dropdown-content-item input, .dropdown-content-item label 
 }
 textarea {
   border: 1px solid black;
+  width: 200px;
+  height: 100px;
+}
+
+textarea:focus {
+  outline: none;
+  padding: 0;
 }
 .absolute {
   position: absolute;
