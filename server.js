@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-var WebSocketServer = require('websocket').server;
-var WebSocketRouter = require('websocket').router;
+var WebSocketServer = require('websocket').server
+var WebSocketRouter = require('websocket').router
 var http = require('http');
 var fs = require('fs');
 var path = require('path')
-var randomRoutePairs = []
+var colGroups = []
 const express = require('express')
 const app = express()
 app.set('port', 3000)
@@ -14,7 +14,7 @@ var randomStr = function(n) {
 }
 app.get('/invite',  function (req, res) {
   var pair = [randomStr(6), randomStr(6)]
-  randomRoutePairs.push(pair)
+  colGroups.push(pair)
   for(var i = 0; i< pair.length; i++) {
     var r = '/' + pair[i]
     app.get(r, function(req, res) {
@@ -25,7 +25,7 @@ app.get('/invite',  function (req, res) {
 })
 app.get('/shareid?', function(req, res) {
   var clientId = req.query.clientid
-  var pair = randomRoutePairs.find( pair => {
+  var pair = colGroups.find( pair => {
     return pair.includes(clientId)
   })
   if(pair) {
@@ -40,9 +40,6 @@ var server = app.listen(app.get('port'), function() {
     var port = server.address().port
     console.log('You are listening on port ' + port)
 })
-// app.get('/*', function(req, res) {
-
-// })
 
 var clients = []
 wsServer = new WebSocketServer({
@@ -79,27 +76,23 @@ wsServer.on('request', function(request) {
     clients.push(connection)
     connection.id = id
     var clientFilter = function() {
-      var pair = randomRoutePairs.find( p => {
+      var pair = colGroups.find( p => {
         return p.includes(connection.id)
       })
-      console.log('randomRoutePairs: ', randomRoutePairs)
+      console.log('colGroups: ', colGroups)
       console.log(new Date() + ' pair: ', pair, connection.id)
-      pair = pair.filter( id => 
-        id !== connection.id
-      )
-      // ['aaaaa', 'bbbbbb','ccccccc'] => ['aaaaa', 'bbbbbb']
-      var invitedClients = clients.filter( c => 
+      var sameGroup = clients.filter( c => 
         pair.includes(c.id)
       )
-      return invitedClients
+      return sameGroup
     }
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
-          console.log('Received Message: ' + message.utf8Data + ' from client ' + connection.id)
           console.log('client amount: ', clients.length)
           // 分发消息到每个邀请的client
           var invitedClients = clientFilter()
           for(var i = 0; i < invitedClients.length; i++) {
+            if(connection !== invitedClients[i])
             invitedClients[i].sendUTF(message.utf8Data)
           }
         }
