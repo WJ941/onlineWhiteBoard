@@ -5,6 +5,7 @@ class WSClient {
     this.isConnected = false
     this.clientId = null
     this.shareId = null
+    this.callback = null
     this.initSocket()
   }
   initSocket() {
@@ -32,32 +33,14 @@ class WSClient {
     sel('#id-copy-input').value = 'http://localhost:3000/' + this.shareId
   }
   receiveMsg(event) {
-    if(!IsJsonString(event.data)) {
-      log(event.data)
-      return
+    if(this.callback) {
+      this.callback(event.data)
     }
-    log(event.data)
-    // var data = JSON.parse(event.data)
-    // var tool = data.tool
-    // switch(tool) {
-    //   case 'pen':
-    //     pen.receiveWsData(data)
-    //     break
-    //   case 'erase':
-    //     eraser.receiveWsData(data)
-    //     break
-    //   default:
-    //     log('no tool')
-    // }
   }
   sendMsg(msg) {
-    log('send msg ', msg)
-    log('this.isConnected: ', this.isConnected)
-    log('this.socket: ', this.socket)
     if(!this.isConnected) {
       return
     }
-    // var msg = JSON.stringify(msg)
     this.socket.send(msg)
   }
   setupSocketListner() {

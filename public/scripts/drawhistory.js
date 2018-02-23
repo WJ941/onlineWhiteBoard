@@ -11,11 +11,11 @@ class DrawHistory {
       return
     }
     var lastDataUrl = this.doneList[this.doneList.length - 1]
-      var img = new Image
-      img.onload = () => {
-        var canvasWidth = Number(this.canvas.style.width.replace('px',''))
-        this.ctx.drawImage(img, 0, 0, canvasWidth, canvasWidth)
-      }
+    var img = new Image
+    img.onload = () => {
+      var canvasWidth = Number(this.canvas.style.width.replace('px',''))
+      this.ctx.drawImage(img, 0, 0, canvasWidth, canvasWidth)
+    }
     img.src = lastDataUrl
   }
   add(dataURL) {

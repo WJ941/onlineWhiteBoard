@@ -24,8 +24,8 @@ class Board {
     //运行中常改变的状态
     this.color = this.colorManager.curColor
     this.tools = [
-      new Pen(this, this.wsClient),
-      new Eraser(this, this.wsClient),
+      new Pen(this),
+      new Eraser(this),
       new Textarea(this),
     ]
     // 
@@ -43,12 +43,11 @@ class Board {
     })
     addListener(this.canvas, 'mouseup', event => {
       this.tool && this.tool.handleMouseup && this.tool.handleMouseup(event)
-      this.drawHistory.add(this.canvas.toDataURL())
-      // this.wsClient.sendMsg(this.canvas.toDataURL())
-      var a = base64Img2Blob(this.canvas.toDataURL())
-      log('binary: ', a)
-
-      this.wsClient.sendMsg(a)
+      var canvasDataURL = this.canvas.toDataURL()
+      this.drawHistory.add(canvasDataURL)
+      this.wsClient.sendMsg(canvasDataURL)
+      //localstorage
+      localStorage.setItem(this.wsClient.shareId, canvasDataURL)
     })
     addListener(this.canvas, 'click', event => {
       this.tool && this.tool.handleClick && this.tool.handleClick(event)
@@ -102,6 +101,19 @@ class Board {
     this.colorManager.addSubscriber( color => {
       this.color = color
     })
+    var self = this
+    this.wsClient.callback = function(data) {
+      if(data.includes('base64')) {
+        self.drawHistory.add(data)
+        self.drawHistory.drawLastOfDoneList()
+      }
+    }
+    log('this.wsClient.clientId : ', this.wsClient.clientId)
+    var canvasDataURL = localStorage.getItem(this.wsClient.clientId)
+    if(canvasDataURL) {
+      this.drawHistory.add(canvasDataURL)
+      this.drawHistory.drawLastOfDoneList()
+    }
   }
   changeTool(newTool) {
     this.tool = newTool

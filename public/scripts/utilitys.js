@@ -46,7 +46,7 @@ function base64Img2Blob(code){
   for (var i = 0; i < rawLength; ++i) {
     uInt8Array[i] = raw.charCodeAt(i)
   }
-  return new Blob([uInt8Array], {type: contentType}); 
+  return new Blob([uInt8Array], {type: contentType}) 
 }
 function base64Img2Binary(code){
   var parts = code.split(';base64,')

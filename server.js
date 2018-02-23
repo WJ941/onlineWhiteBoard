@@ -3,7 +3,6 @@ var WebSocketServer = require('websocket').server;
 var WebSocketRouter = require('websocket').router;
 var http = require('http');
 var fs = require('fs');
-var uuidv4 = require('uuid/v4')
 var path = require('path')
 var randomRoutePairs = []
 const express = require('express')
@@ -53,6 +52,8 @@ wsServer = new WebSocketServer({
     // facilities built into the protocol and the browser.  You should
     // *always* verify the connection's origin and decide whether or not
     // to accept it.
+    maxReceivedFrameSize: 131072,
+    maxReceivedMessageSize: 10 * 1024 * 1024,
     autoAcceptConnections: false
 })
  
@@ -103,7 +104,11 @@ wsServer.on('request', function(request) {
           }
         }
         else if (message.type === 'binary') {
-            console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');
+          console.log('Received Binary Message of ' + message.binaryData.length + ' bytes')
+          var invitedClients = clientFilter()
+          for(var i = 0; i < invitedClients.length; i++) {
+            invitedClients[i].send(message.binaryData)
+          }
         }
     })
     connection.on('close', function(reasonCode, description) {
