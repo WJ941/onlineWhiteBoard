@@ -9,7 +9,12 @@
 4. 完成后保存PDF或者PNG
 ## 效果演示
 ![效果演示][102]
-
+## 使用说明
+```
+git clone git@github.com:WJ941/onlineWhiteBoard.git
+npm install
+node server.js
+```
 [1]:https://github.com/WJ941/onlineWhiteBoard
 [2]:https://github.com/karan/Projects#web
 
