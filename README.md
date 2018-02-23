@@ -1,5 +1,5 @@
 ## [在线画板项目][1]简介
->此项目是Mega Project List中的第二个web项目，
+>此项目是Mega Project List中的第二个web项目[onlie white board][2]，
 ![onlie white board][101]
 
 ## 功能特色
@@ -11,6 +11,7 @@
 ![效果演示][102]
 
 [1]:https://github.com/WJ941/onlineWhiteBoard
+[2]:https://github.com/karan/Projects#web
 
 [101]: captures/megaprojectlist.png
 [102]: captures/demo.gif
