@@ -1,0 +1,72 @@
+.chatroom {
+  width: 300px;
+  height: 600px;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  border: 1px solid black;
+}
+.chatroom-title {
+  text-align: center;
+  border-bottom: 1px solid black;
+  height: 30px;
+  line-height: 30px;
+}
+.charroom-amount {
+  float: right;
+}
+.chatroom-history {
+  border-bottom: 1px solid black;
+  background-color: #F2F5F8;
+  position: absolute;
+  bottom: 50px;
+  top: 36px;
+  right: 0px;
+  left: 0px;
+  padding: 10px;
+}
+.chatroom-response {
+  height: 35px;
+  width: 100%;
+  position: absolute;
+  bottom: 8px;
+}
+.chatroom-response textarea {
+  height: 100%;
+  width: 76%;
+  display: inline-block;
+  margin-left: 6px;
+}
+.chatroom-response button {
+  height: 100%;
+  width: 20%;
+  display: inline-block;
+  position: absolute;
+  top: 0px;
+  right: 8px;
+}
+
+/* msg stylesheet */
+.chatroom-msg-info {
+  margin: 6px 0px;
+  padding: 2px 4px;
+}
+.chatroom-msg-time {
+  opacity: 0.5;
+}
+.chatroom-msg-content {
+  background: #86BB71;
+  padding: 8px 10px;
+  border-radius: 7px;
+  position: relative;
+}
+.chatroom-msg-content::after {
+  content: " ";
+  border: 7px solid transparent;
+  border-bottom-color: #86BB71;
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  bottom: 100%;
+  left: 7%;
+}
