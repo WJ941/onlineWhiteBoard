@@ -1,0 +1,25 @@
+{
+  "name": "onlinewhiteboard",
+  "version": "1.0.0",
+  "description": ">此项目是Mega Project List中的第二个web项目[onlie white board][2] ![onlie white board][101]",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.16.2",
+    "websocket": "^1.0.25"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WJ941/onlineWhiteBoard.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WJ941/onlineWhiteBoard/issues"
+  },
+  "homepage": "https://github.com/WJ941/onlineWhiteBoard#readme"
+}
