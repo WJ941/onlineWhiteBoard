@@ -25,6 +25,7 @@
   <meta name="theme-color" content="#ffffff">
   <!-- stylesheet -->
   <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+  <link rel="stylesheet" href="./style/general.css">
   <link rel="stylesheet" href="./style/styles.css">
   <link rel="stylesheet" href="./style/modal.css">
   <link rel="stylesheet" href="./style/canvas.css">
@@ -34,172 +35,207 @@
   <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
 </head>
 <body>
-  <input type="radio" id="id-text" class="hide" name="tool">
-  <div>
-    <ul>
+    <ul class="nav">
       <!-- 颜色选择 -->
-      <li class="dropdown">
-        <input type="radio" id="id-color" class="hide" name="tool">
-        <label for="id-color" class="dropbtn">
+      <li class="dropdown tooltip" data-tooltip-title="颜色">
+        <a href="#" id="id-color" class="dropbtn gray2black-hover">
           <i id="id-color-icon" class="fas fa-paint-brush fa-2x"></i>
-        </label>
+        </a>
         <div class="dropdown-content">
-          <div class="dropdown-content-item">
-            <label for="">颜色</label>
+          <p class="dropdown-content-item">
+            <label for="">颜色：</label>
             <input type="radio" class="black" name="color" value="black" checked>
             <input type="radio" class="red" name="color" value="red">
             <input type="radio" class="yellow" name="color" value="yellow">
-          </div>
-          <div class="dropdown-content-item">
+          </p>
+          <p class="dropdown-content-item">
             <input id="id-color-picker" type="color" value= '#ff0000'>
-          </div>
+          </p>
         </div>
       </li>
       <!-- 画笔 -->
-      <li class="dropdown" data-title="画笔">
-        <input type="radio" id="id-brush" class="hide" name="tool">
-        <label for="id-brush" class="dropbtn">
+      <li class="dropdown tooltip" data-tooltip-title="画笔">
+        <a href="#"  id="id-brush" class="dropbtn gray2black-hover">
           <i class="fas fa-pencil-alt fa-2x"></i>
-        </label>
+        </a>
         <div class="dropdown-content">
-          <form>
-            <div class="dropdown-content-item">
-              <label>画笔粗细</label>
+            <p class="dropdown-content-item">
+              <label>画笔粗细：</label>
               <input type="range" min="1" max="10" value="1" name="line-width"></input>
               <span id="line-width">10</span>
-            </div>
-          </form>
+            </p>
         </div>
       </li>
     <!-- 文字 -->
-      <li class="dropdown" data-title="写字">
-        <label for="id-text" class="dropbtn">
+      <li class="dropdown tooltip" data-tooltip-title="文字">
+        <a href="#"  id="id-text" class="dropbtn gray2black-hover">
           <i class="fas fa-font fa-2x"></i>
-        </label>
+        </a>
         <div class="dropdown-content"  for="id-text">
-            <div class="dropdown-content-item">
-              <label>字体</label>
+            <p class="dropdown-content-item">
+              <label>字体：</label>
               <select name="font-family">
                 <option value="value1" selected>Value 1</option> 
                 <option value="value2">Value 2</option>
                 <option value="value3">Value 3</option>
               </select>
-            </div>
-            <div class="dropdown-content-item">
-              <p>没有你需要的字体？</p>
-              <label for="id-font-name">字体名称</label>
+            </p>
+            <p class="dropdown-content-item">
+              <span>没有你需要的字体？</span><br>
+              <label for="id-font-name">字体名称：</label>
               <input type="text" id="id-font-name" required><br>
-              <label for="id-font-url">字体在线地址</label>
+              <label for="id-font-url">字体在线地址：</label>
               <input type="text" id="id-font-url" placeholder="some url" required>
               <input type="submit" id="id-font-submit" value="提交">
-            </div>
-            <div class="dropdown-content-item">
-                <label>字体大小</label>
+            </p>
+            <p class="dropdown-content-item">
+                <label>字体大小：</label>
                 <input type="range" min="10" max="60" value="1" step="2" name="font-size"></input>
                 <span id="id-font-size">1</span>
-              </div>
+            </p>
         </div>
       </li>
       <!-- 橡皮擦 -->
-      <li class="dropdown" data-title="橡皮擦">
-        <input type="radio" id="id-eraser" class="hide" name="tool">
-        <label for="id-eraser" class="dropbtn">
+      <li class="dropdown tooltip" data-tooltip-title="橡皮擦">
+        <a href="#"  id="id-eraser" class="dropbtn gray2black-hover">
           <i class="fas fa-eraser fa-2x"></i>
-        </label>
+        </a>
         <div class="dropdown-content">
-            <div class="dropdown-content-item">
-              <label>橡皮擦大小</label>
+            <p class="dropdown-content-item">
+              <label>橡皮擦大小：</label>
               <input type="range" min="10" max="60" value="1" step="2" name="eraser-size"></input>
               <span id="eraser-size">1</span>
-            </div>
+            </p>
         </div>
       </li>
       <!-- 清空画布 -->
-      <li class="dropdown" data-title="清空">
-        <input type="radio" id="id-clear" class="hide" name="tool">
-        <label for="id-clear" class="dropbtn">
+      <li class="dropdown tooltip" data-tooltip-title="清空画布">
+        <a href="#"  id="id-clear" class="dropbtn  gray2black-hover">
           <i class="fas fa-trash-alt fa-2x"></i>
-        </label>
+        </a>
       </li>
       <!-- 撤销 -->
-      <li class="dropdown" data-title="清空">
-        <input type="button" id="id-undo" class="hide">
-        <label for="id-undo" class="dropbtn">
+      <li class="dropdown tooltip" data-tooltip-title="撤销">
+        <a href="#"  id="id-undo" class="dropbtn  gray2black-hover">
           <i class="fas fa-reply fa-2x"></i>
-        </label>
+        </a>
       </li>
       <!-- 恢复 -->
-      <li class="dropdown" data-title="清空">
-        <input type="button" id="id-recover" class="hide">
-        <label for="id-recover" class="dropbtn">
+      <li class="dropdown tooltip" data-tooltip-title="恢复">
+        <a href="#"  id="id-recover" class="dropbtn  gray2black-hover">
           <i class="fas fa-share fa-2x"></i>
-        </label>
+        </a>
       </li>
       <!-- 邀请其他人 -->
-      <li class="dropdown modal" data-title="邀请其他人">
-        <input type="radio" id="id-invite-btn" class="hide" name="tool">
-        <label for="id-invite-btn" class="dropbtn">
+      <li class="dropdown modal tooltip" data-tooltip-title="邀请其他人">
+        <a href="#"  id="id-invite-btn" class="dropbtn  gray2black-hover">
           <i class="fas fa-user-plus  fa-2x"></i>
-        </label>
+        </a>
         <div class="modal-overlay">
           <div class="modal-wrap">
-            <input type="radio" id="id-close-modal" class="hide" name="tool">
-            <label for="id-close-modal" class="close">
-                <i class="fas fa-times"></i>
-            </label>
+            <span id="id-close-modal" class="close">
+              <i class="fas fa-times"></i>
+            </span>
             <div class="modal-wrap-content">
-              <p>通过链接复制</p>
-              <input id="id-copy-input" type="text" value="some url" disabled class="mt-2 input">
-              <button id="id-copy-link" class="button">复制链接</button>
+              <p>
+                <span>通过链接复制：</span><br>
+                <span><input id="id-copy-input" type="text" value="some url" disabled>
+                <button id="id-copy-link" class="cur-p gray2black-hover">复制链接</button></span>
+              </p>
             </div>
           </div>
         </div>
       </li>
-      <!-- 保存 -->
-      <li class="dropdown">
-        <input type="radio" id="id-save" class="hide" name="tool">
-        <label for="id-save" class="dropbtn">
+      <!-- 另存为 -->
+      <li class="dropdown tooltip" data-tooltip-title="另存为">
+        <a href="#"  id="id-save" class="dropbtn gray2black-hover">
           <i class="fas fa-save fa-2x"></i>
-        </label>
+        </a>
         <div class="dropdown-content">
-            <div class="dropdown-content-item">
-              <button class="button" id="id-save-pdf">保存为PDF</button>
-            </div>
-            <div class="dropdown-content-item">
-              <button class="button" id="id-save-img">保存为图片</button>
-            </div>
+            <p class="dropdown-content-item">
+              <button id="id-save-pdf">保存为PDF</button>
+            </p>
+            <p class="dropdown-content-item">
+              <button id="id-save-img">保存为图片</button>
+            </p>
         </div>
       </li>
-
     </ul>
-  </div>
   <textarea id="id-textarea" autofocus class="hide absolute"
   placeholder="请输入"></textarea>
+  <!--  -->
   <!-- 聊天模块 -->
-  <section class="chatroom">
-    <div class="chatroom-title">
-     <span>群聊室</span><span class="charroom-amount">成员数量：0</span>
-    </div>
-    <div class="chatroom-history">
-      <ul>
-        <li>
-          <div class="chatroom-msg-info">
-            <span class="chatroom-msg-name"><i class="fa fa-circle online"></i> Vincent</span>
-            <span class="chatroom-msg-time">10:20 AM, Today</span>
-          </div>
-          <div class="chatroom-msg-content">
-            Actually everything was fine. I'm very excited to show this to our team.
-          </div>
-        </li>
-        <li></li>
-        <li></li>
+  <div class="chat">
+    <!-- 用来显示/隐藏聊天窗口的checkbox -->
+    <input type="checkbox" id="id-chat-toggle" class="hide">
+    <!-- 聊天窗口 -->
+    <div class="chat-main fadeInup">
+      <!-- 头部导航栏 -->
+      <div class="chat-header">
+        <i class="fas fa-check fa-lg after-editing gray2black-hover"></i>
+        <i class="fas fa-edit fa-lg before-editing gray2black-hover"></i>
+        <div class="input-underscroe">
+          <input type="text" class="chat-username" readonly>
+        </div>
+        <i class="fas fa-phone fa-lg before-editing gray2black-hover" id="id-chat-voice"></i>
+      </div>
+      <!-- 对话消息历史 -->
+      <ul class="chat-history">
+        <!-- 自己的消息的模版 -->
+        <script id="self-msg-template" type="text/html">
+          <li class="clearfix">
+            <div class="mb-10 pd-2-4 ta-r">
+              <time class="pd-0-6 op-05">{{time}}</time>
+              <span>{{userName}}</span>
+              <i class="fa fa-circle fa-xs"></i>
+            </div>
+            <div class="chat-msg-content self-msg text">
+              {{msg}}
+            </div>
+          </li>
+        </script>
+        <!-- 接受其他用户的消息的模版 -->
+        <script id="other-msg-template" type="text/html">
+          <li class="clearfix">
+            <div class="mb-10 pd-2-4 ta-l">
+              <i class="fa fa-circle fa-xs"></i>
+              <span>{{userName}}</span>
+              <time class="pd-0-6 op-05">{{time}}</time>
+            </div>
+            <div class="chat-msg-content other-msg text">
+              {{msg}}
+            </div>
+          </li>
+        </script>
+        <!-- 改变用户名通知的模版 -->
+        <script id="change-name-template" type="text/html">
+          <li class="clearfix">
+            <time class='center op-05'>{{time}}</time>
+            <p class='ta-c mt-0'>{{msg}}</p>
+          </li>
+        </script>
       </ul>
+      <!-- 回复消息区域 -->
+      <div class="d-f pd-10">
+        <textarea class="chat-input" cols="25" rows="2" placeholder="请输入："></textarea>
+        <button class="cur-p gray2black-hover" id="id-submit">发送</button>
+      </div>
+      <!-- 语音聊天 -->
+      <div class="chat-voice-main fadeInup">
+        <P>
+          讲话中
+        </P>
+        <div class="chat-voice-close-container">
+          <i class="fas fa-phone fa-3x" id="chat-voice-close"></i>
+        </div>
+      </div>
     </div>
-    <div class="chatroom-response">
-      <textarea class="chatroom-input"></textarea>
-      <button class="chatroom-response-submit">发送</button>
-    </div>
-  </section>
+    <!-- 显示/隐藏聊天窗口 -->
+    <label for="id-chat-toggle" class="fl-r">
+      <i class="far fa-window-close fa-3x chat-opened hide gray2black-hover"></i>
+      <i class="far fa-comment-alt fa-3x chat-closed gray2black-hover"></i>
+    </label>
+  </div>
 </body>
 <script src="./wsClient.js"></script>
 <script src="./scripts/board.js"></script>
@@ -208,6 +244,7 @@
 <script src="./scripts/tools/eraser.js"></script>
 <script src="./scripts/tools/colorManager.js"></script>
 <script src="./scripts/drawhistory.js"></script>
+<script src="./scripts/chat.js"></script>
 <script src="./scripts/utilitys.js"></script>
 <script>
 var _main = function() {

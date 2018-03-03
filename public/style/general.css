@@ -1,0 +1,47 @@
+.mb-10 {
+  margin-bottom: 10px;
+}
+.mt-0 {
+  margin-top: 0px;
+}
+.pd-2-4 {
+  padding: 2px 4px;
+}
+.pd-0-6 {
+  padding: 0px 6px;
+}
+.pd-10 {
+  padding: 10px 0;
+}
+.op-05 {
+  opacity: 0.5;
+}
+.ta-r {
+  text-align: right;
+}
+.ta-l {
+  text-align: left;
+}
+.clearfix::after {
+  content: "."; 
+  visibility: hidden; 
+  display: block; 
+  height: 0; 
+  clear: both;
+}
+.d-f {
+  display: flex;
+}
+.cur-p {
+  cursor: pointer;
+}
+.fl-r {
+  float: right;
+}
+.center {
+  display: block;
+  text-align: center;
+}
+.ta-c {
+  text-align: center;
+}
