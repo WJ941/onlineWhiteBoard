@@ -6,13 +6,15 @@ class WSClient {
     this.clientId = null
     this.shareId = null
     this.callback = null
+    this.hostname = '0.0.0.0'
+    this.SSLPORT = 3000
     this.initSocket()
   }
   initSocket() {
     this.clientId = window.location.pathname.slice(1)
     if(this.clientId.length > 0) {
       this.isConnected = true
-      this.socket = new WebSocket('ws://localhost:3000/' + this.clientId, 'echo-protocol')
+      this.socket = new WebSocket('wss://' + this.hostname + ':' + this.SSLPORT + '/' + this.clientId, 'echo-protocol')
       log('socket', this.socket)
       this.getShareId()
       this.setupShareURL()
@@ -27,10 +29,10 @@ class WSClient {
       self.shareId = res
       self.setupShareURL()
     }
-    AjaxGet('http://localhost:3000/shareid?clientid=' +this.clientId, a)
+    AjaxGet('https://' +  this.hostname + ':' + this.SSLPORT + 'shareid?clientid=' + this.clientId, a)
   }
   setupShareURL() {
-    sel('#id-copy-input').value = 'http://localhost:3000/' + this.shareId
+    sel('#id-copy-input').value = 'https://' +  this.hostname + ':' + this.SSLPORT + '/' + this.shareId
   }
   receiveMsg(event) {
     if(this.callback) {
@@ -43,12 +45,22 @@ class WSClient {
     }
     this.socket.send(msg)
   }
+  sendObj(obj) {
+    if(!this.isConnected) {
+      return
+    }
+    this.socket.send(JSON.stringify(obj))
+  }
   setupSocketListner() {
     // Connection opened
     var socket = this.socket
     var self = this
     socket.addEventListener('open', function (event) {
-      socket.send('client' + self.clientId + ' websocket succeed!')
+      var msg = {
+        type: 'message',
+        data:'client ' + self.clientId + ' websocket succeed!',
+      }
+      self.sendObj(msg)
     })
     // Listen for messages
     socket.addEventListener('message', function (event) {
@@ -80,7 +92,7 @@ class WSClient {
       self.initSocket()
       self.setupShareURL()
     }
-    AjaxGet('http://localhost:3000/invite', a)
+    AjaxGet('https://' +  this.hostname + ':' + this.SSLPORT + '/invite', a)
   }
 }
 
