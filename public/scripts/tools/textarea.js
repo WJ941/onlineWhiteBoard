@@ -1,7 +1,8 @@
 class Textarea {
-  constructor(board) {
-    this.board = board
-    this.ctx = this.board.ctx
+  constructor(canvas, colorManager, callback) {
+    this.canvas = canvas
+    this.ctx = canvas.getContext('2d')
+    this.colorManager = colorManager
     this.textarea = sel('#id-textarea')
     this.elem = sel('#id-text')
     this.fontFamilyOptions = selAll('select[name="font-family"] option')
@@ -26,6 +27,8 @@ class Textarea {
     this.layerX = 0
     this.layerY = 0
     this.handleTextsCB = null
+    this.isSelected = false
+    this.callback = callback
     this.init()
     this.setInputs()
   }
@@ -53,7 +56,7 @@ class Textarea {
     this.handleTextsCB = func
   }
   moveTo(x, y) {
-    this.textarea.style.color = this.board.color
+    this.textarea.style.color = this.colorManager.curColor
     this.show()
     this.setPosition(x, y)
   }
@@ -72,9 +75,9 @@ class Textarea {
     var x = this.layerX
     var y = this.layerY + Number(this.fontSize)
     this.ctx.font = this.fontSize + "px " + this.curFontFamily
-    this.ctx.fillStyle = this.board.color
+    this.ctx.fillStyle = this.colorManager.curColor
     this.ctx.fillText(text, x, y)
-    this.board.drawHistory.add(this.board.canvas.toDataURL())
+    this.callback && this.callback()
   }
   getDefaultFontFamily() {
     return css(this.textarea, 'font-family')
@@ -114,10 +117,25 @@ class Textarea {
     }
   }
   setInputs() {
+    // 点击textarea
     addListener(this.textarea, 'click', event => {
       this.handletextareaClick(event)
     })
-
+    // 点击canvas
+    addListener(this.canvas, 'click', e => {
+      if(this.isSelected) {
+        this.handleClick(e)
+      }
+    })
+    // 点击canvas意外的区域
+    addListener(document, 'click', e => {
+      var a = sel('#id-chat-toggle')
+      if( e.target === this.canvas ||  this.canvas.contains(e.target)) {
+        return
+      }
+      this.hide()
+    })
+    // 字体大小
     addListener(this.fontSizeInput, 'input', event => {
       this.setFontSize(event.target.value)
     })
@@ -143,33 +161,5 @@ class Textarea {
       this.textarea.style.fontFamily = this.curFontFamily
       log(this.curFontFamily)
     })
-  }
-
-  sendWsData(method, x, y) {
-    // var args = {
-    //   x: x,
-    //   y: y,
-    //   color: this.strokeStyle,
-    //   width: this.lineWidth,
-    // }
-    // var tool = 'pen'
-    // this.wsClient.sendMsg({
-    //   tool: tool,
-    //   method: method,
-    //   args: args,
-    // })
-  }
-  receiveWsData(data) {
-    // var method = data.method
-    // var {x, y, color, width} = data.args
-    // if(color) {
-    //   this.strokeStyle = color
-    // }
-    // if(width) {
-    //   this.lineWidth = width
-    // }
-    // if(this[method]) {
-    //   this[method](x, y)
-    // }
   }
 }

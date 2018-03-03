@@ -114,3 +114,38 @@ function IsJsonString(str) {
   }
   return true;
 }
+
+function templateReplace(template, data) {
+  function getNextPlaceholderIndex() {
+    var leftIndex = template.indexOf('{{')
+    var rightIndex = template.indexOf('}}')
+    if( leftIndex === -1 || rightIndex === -1) {
+      return false
+    } else {
+      return {left: leftIndex, right: rightIndex}
+    }
+  }
+  function setReplace(indexRange) {
+    var key = template.slice(indexRange.left + 2, indexRange.right)
+    template = template.replace('{{' + key + '}}', data[key])
+    beginReplace()
+  }
+  function beginReplace() {
+    var indexRange = getNextPlaceholderIndex()
+    if(indexRange) {
+      setReplace(indexRange)
+    }
+  }
+  beginReplace()
+  return template
+}
+
+function escapeHTML (unsafe_str) {
+  return unsafe_str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\"/g, '&quot;')
+    .replace(/\'/g, '&#39;')
+    .replace(/\//g, '&#x2F;')
+}

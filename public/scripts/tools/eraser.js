@@ -1,19 +1,25 @@
 class Eraser {
-  constructor(board, wsClient) {
-    this.board = board
+  constructor(canvas, callback) {
+    this.canvas = canvas
+    this.ctx = canvas.getContext('2d')
     this.eraseWidth = 10
     this.eraseHeight = 10
     this.enableErase = false
-    this.wsClient = wsClient
     this.eraserSizeInput = sel('input[name="eraser-size"]')
     this.elem = sel('#id-eraser')
     this.eraserSize =  10
+    this.isSelected = false
+    this.callback = callback
     this.setupInputs()
   }
   setupInputs() {
-    addListener(this.eraserSizeInput, 'change', event => {
+    addListener(this.eraserSizeInput, 'input', event => {
       this.eraserSize = event.target.value
+      sel('#eraser-size').innerText = event.target.value
     })
+    this.addEventL('mousedown', this.beginErase.bind(this))
+    this.addEventL('mousemove', this.erase.bind(this))
+    this.addEventL('mouseup', this.endErase.bind(this))
   }
   beginErase() {
     this.enableErase = true
@@ -22,61 +28,19 @@ class Eraser {
     if(this.enableErase == false) {
       return
     }
-    this.board.ctx.clearRect(x, y, this.eraserSize, this.eraserSize)
+    this.ctx.clearRect(x, y, this.eraserSize, this.eraserSize)
   }
   endErase() {
     this.enableErase = false
+    this.callback && this.callback()
   }
-  handleMousedown(event) {
-    var x = event.layerX
-    var y = event.layerY
-    this.beginErase(x, y)
-    if(!this.board.isConnected) {
-      return
-    }
-    this.sendWsData('beginErase', x, y)
-  }
-  handleMousemove(event) {
-    var x = event.layerX
-    var y = event.layerY
-    this.erase(x, y)
-    if(!this.board.isConnected) {
-      return
-    }
-    this.sendWsData('erase', x, y)
-  }
-  handleMouseup(event) {
-    this.endErase()
-    if(!this.board.isConnected) {
-      return
-    }
-    this.sendWsData('endErase')
-  }
-  sendWsData(method, x, y) {
-    var args = {
-      x: x,
-      y: y,
-      height: this.eraseHeight,
-      width: this.eraseWidth,
-    }
-    var tool = 'erase'
-    this.wsClient.sendMsg({
-      tool: tool,
-      method: method,
-      args: args,
+  addEventL(eventType, f) {
+    addListener(this.canvas, eventType, e => {
+      if(this.isSelected) {
+        var x = event.layerX,
+            y = event.layerY
+        f(x, y)
+      }
     })
-  }
-  receiveWsData(data) {
-    var method = data.method
-    var {x, y, height, width} = data.args
-    if(height) {
-      this.eraseHeight = height
-    }
-    if(width) {
-      this.eraseWidth = width
-    }
-    if(this[method]) {
-      this[method](x, y)
-    }
   }
 }
