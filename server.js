@@ -1,12 +1,28 @@
-#!/usr/bin/env node
 var WebSocketServer = require('websocket').server
 var WebSocketRouter = require('websocket').router
-var http = require('http');
-var fs = require('fs');
-var path = require('path')
-var colGroups = []
 const express = require('express')
+var https = require('https')
+var http = require('http')
+var path = require('path')
+var fs = require('fs');
+var PORT = 3000
+var SSLPORT = 3000
+var log = console.log.bind(console)
+var colGroups = []
+var clients = []
 const app = express()
+
+//导入HTTPS证书文件  
+const privateKey  = fs.readFileSync(path.join(__dirname, './cert/214527447900724.key'), 'utf8');
+const certificate = fs.readFileSync(path.join(__dirname, './cert/214527447900724.pem'), 'utf8');
+const credentials = {key: privateKey, cert: certificate}
+
+var httpsServer = https.createServer(credentials, app)
+//创建https服务器  
+httpsServer.listen(SSLPORT, function() {  
+  console.log('HTTPS Server is running on: https://localhost:%s', SSLPORT);  
+})
+
 app.set('port', 3000)
 app.use(express.static(path.join(__dirname, 'public')))
 var randomStr = function(n) {
@@ -35,20 +51,9 @@ app.get('/shareid?', function(req, res) {
     res.send(shareid)
   }
 })
-// Listen for requests
-var server = app.listen(app.get('port'), function() {
-    var port = server.address().port
-    console.log('You are listening on port ' + port)
-})
 
-var clients = []
 wsServer = new WebSocketServer({
-    httpServer: server,
-    // You should not use autoAcceptConnections for production
-    // applications, as it defeats all standard cross-origin protection
-    // facilities built into the protocol and the browser.  You should
-    // *always* verify the connection's origin and decide whether or not
-    // to accept it.
+    httpServer: httpsServer,
     maxReceivedFrameSize: 131072,
     maxReceivedMessageSize: 10 * 1024 * 1024,
     autoAcceptConnections: false
@@ -88,18 +93,27 @@ wsServer.on('request', function(request) {
     }
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
-          console.log('client amount: ', clients.length)
-          // 分发消息到每个邀请的client
-          var invitedClients = clientFilter()
-          for(var i = 0; i < invitedClients.length; i++) {
-            if(connection !== invitedClients[i])
-            invitedClients[i].sendUTF(message.utf8Data)
+          try {
+            msg = JSON.parse(message.utf8Data.replace(/\n/g,"\\\\n").replace(/\r/g,"\\\\r"))
+            // msg = message.utf8Data
+            console.log('client amount: ', clients.length)
+            // 分发消息到每个邀请的client
+            console.log('message type: ', msg.type)
+            var invitedClients = clientFilter()
+            for(var i = 0; i < invitedClients.length; i++) {
+              if(connection !== invitedClients[i])
+              invitedClients[i].send(message.utf8Data)
+            }
+          } catch(e) {
+            log('error: ', e)
+            log('invalid json data: ', message.utf8Data)
           }
         }
         else if (message.type === 'binary') {
           console.log('Received Binary Message of ' + message.binaryData.length + ' bytes')
           var invitedClients = clientFilter()
           for(var i = 0; i < invitedClients.length; i++) {
+            if(connection !== invitedClients[i])
             invitedClients[i].send(message.binaryData)
           }
         }
