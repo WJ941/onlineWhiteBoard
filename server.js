@@ -5,7 +5,6 @@ var https = require('https')
 var http = require('http')
 var path = require('path')
 var fs = require('fs');
-var PORT = 3000
 var SSLPORT = 3000
 var log = console.log.bind(console)
 var colGroups = []
@@ -20,10 +19,9 @@ const credentials = {key: privateKey, cert: certificate}
 var httpsServer = https.createServer(credentials, app)
 //创建https服务器  
 httpsServer.listen(SSLPORT, function() {  
-  console.log('HTTPS Server is running on: https://localhost:%s', SSLPORT);  
+  console.log('HTTPS Server is running on:', SSLPORT);  
 })
 
-app.set('port', 3000)
 app.use(express.static(path.join(__dirname, 'public')))
 var randomStr = function(n) {
   return Math.random().toString(16).substr(2, 2 + n)
