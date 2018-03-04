@@ -20,6 +20,9 @@ class ChatRoom {
     this.setupInputs()
     this.voiceChat()
   }
+  show() {
+    this.chatroom.classList.remove('hide')
+  }
   sendInfoMsg(msg) {
     var obj = {
       type: 'chatinfo',

@@ -59,7 +59,8 @@ class Board {
     })
     // 邀请其他人
     addListener(this.inviteBtn, 'click', event => {
-      this.wsClient.makeInviteRequest() 
+      this.wsClient.makeInviteRequest()
+      this.chatroom.show()
     })
     // 复制邀请地址
     addListener(this.copyLinkBtn, 'click', event => {
