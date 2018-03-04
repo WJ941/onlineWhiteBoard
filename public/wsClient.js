@@ -6,7 +6,8 @@ class WSClient {
     this.clientId = null
     this.shareId = null
     this.callback = null
-    this.hostname = '0.0.0.0'
+    // 部署时改成域名 比如：‘www.coldfor.com’
+    this.hostname = 'localhost'
     this.SSLPORT = 3000
     this.initSocket()
   }
@@ -29,7 +30,7 @@ class WSClient {
       self.shareId = res
       self.setupShareURL()
     }
-    AjaxGet('https://' +  this.hostname + ':' + this.SSLPORT + 'shareid?clientid=' + this.clientId, a)
+    AjaxGet('https://' +  this.hostname + ':' + this.SSLPORT + '/shareid?clientid=' + this.clientId, a)
   }
   setupShareURL() {
     sel('#id-copy-input').value = 'https://' +  this.hostname + ':' + this.SSLPORT + '/' + this.shareId
