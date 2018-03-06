@@ -6,7 +6,9 @@ class WSClient {
     this.clientId = null
     this.shareId = null
     this.callback = null
-    // 部署时改成域名 比如：‘www.coldfor.com’
+    // if (process.env.NODE_ENV === "production") {
+    //   this.hostname = 'www.coldfor.com'
+    // }
     this.hostname = 'localhost'
     this.SSLPORT = 3000
     this.initSocket()

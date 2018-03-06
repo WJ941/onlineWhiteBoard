@@ -68,6 +68,7 @@ input:checked {
   padding: 0;
   overflow: visible;
   display: flex;
+  flex-wrap: wrap;
   background-color: #F2F5F8;
 }
 .dropbtn {
@@ -169,7 +170,8 @@ textarea:focus {
   border-width: 0px 6px 6px 6px;
   bottom: -8px;
   content: "";
-  left: 20%;
+  left: 50%;
+  margin-left: -3px;
   position: absolute;
   z-index: 1;
 }
