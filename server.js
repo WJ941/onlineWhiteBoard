@@ -12,8 +12,15 @@ var clients = []
 const app = express()
 
 //导入HTTPS证书文件  
-const privateKey  = fs.readFileSync(path.join(__dirname, './cert/214527447900724.key'), 'utf8');
-const certificate = fs.readFileSync(path.join(__dirname, './cert/214527447900724.pem'), 'utf8');
+var keyPath = './cert/214527447900724.key'
+var certPath = './cert/214527447900724.pem'
+if (process.env.NODE_ENV === "production") {
+  keyPath = '/cert/214528638570724.key'
+  certPath = '/cert/214528638570724.pem'
+  SSLPORT = 3389
+}
+const privateKey  = fs.readFileSync(path.join(__dirname, keyPath), 'utf8');
+const certificate = fs.readFileSync(path.join(__dirname, certPath), 'utf8');
 const credentials = {key: privateKey, cert: certificate}
 
 var httpsServer = https.createServer(credentials, app)
