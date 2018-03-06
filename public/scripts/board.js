@@ -2,14 +2,16 @@
 class Board {
   constructor() {
     //Dom 对象
-    this.canvas = createHiDPICanvas(1000, 1000)
+    this.canvas = createHiDPICanvas(window.innerWidth, window.innerHeight - 60)
     document.body.appendChild(this.canvas)
     this.clearBtn = sel('#id-clear')
     this.inviteBtn = sel('#id-invite-btn')
-    //
+    // 另存为
     this.savePDFBtn = sel('#id-save-pdf')
     this.saveImgBtn = sel('#id-save-img')
-    //
+    // 放大缩小
+    this.scaleBtn = sel('#id-scale')
+    this.reduceBtn = sel('#id-reduce')
     this.copyLinkBtn = sel('#id-copy-link')
     this.copyLinkInput = sel('#id-copy-input')
     this.colorManager = ColorManager.instance()
@@ -54,7 +56,6 @@ class Board {
   setupInputs() {
     // 清空画布
     addListener(this.clearBtn, 'click', event => {
-      this.clearBoard()
       this.ctx.clearRect(0, 0, this.width, this.height)
     })
     // 邀请其他人
@@ -80,6 +81,14 @@ class Board {
       var pdf = new jsPDF()
       pdf.addImage(imgData, 'PNG', 0, 0)
       pdf.save("download.pdf")
+    })
+    // 放大缩小
+    addListener(this.scaleBtn ,'click', event => {
+      log('scale')
+      this.scaleBoard(1.2)
+    })
+    addListener(this.reduceBtn, 'click', event => {
+      this.scaleBoard(0.8)
     })
     //点击导航栏，切换工具
     this.tools.forEach( tool => {
@@ -112,7 +121,24 @@ class Board {
       a.checked = false
     })
   }
+  // 缩小/放大画布
+  scaleBoard(ratio) {
+    // var ratio = 1.2
+    // ratio 为大于1时， 放大
+    var img = new Image
+    var canvasWidth = Number(this.canvas.style.width.replace('px',''))
+    var canvasHeight = Number(this.canvas.style.height.replace('px',''))
+    var sx = canvasWidth * (ratio - 1) / 2
+    var sy = canvasHeight * (ratio - 1) / 2
+    var sw = canvasWidth * ratio
+    var sh = canvasHeight * ratio
 
+    img.onload = () => {
+      this.ctx.clearRect(0, 0, this.width, this.height)
+      this.ctx.drawImage(img, -sx, -sy, sw, sh)
+    }
+    img.src = this.canvas.toDataURL('image/png', 1.0)
+  }
   init() {
     var self = this
     this.wsClient.callback = function(data) {
